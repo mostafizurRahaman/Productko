@@ -8,7 +8,7 @@ const Banner = () => {
           <div className="">
                <h2 className='text-3xl md:text-6xl  font-bold ' style={{lineHeight: '1.3em'}}><span className='text-primary '>Buy Good</span> <br />Products at low price. </h2>
                <p className='text-xl font-medium '>We are a reseller company who provides you some products at low price.</p>
-               <Link to='/' className='mt-5 block '><PrimaryButton btnContent='Buy Now'></PrimaryButton></Link>
+               <Link to='/' className='mt-5 inline-block '><PrimaryButton btnContent='Buy Now'></PrimaryButton></Link>
           </div>
           <div>
                <img src={heroImage} alt='reseller_image' className='md:w-full mx-auto' />
