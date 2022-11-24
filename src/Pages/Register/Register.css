@@ -1,0 +1,5 @@
+.registerBg{
+   background: linear-gradient(rgb(137, 168, 245), rgba(3, 29, 91, 0.537)), url('../../Assests/loginBg.jpg') no-repeat;
+   background-size: cover;
+   background-position: center center; 
+}
