@@ -3,14 +3,34 @@ import { useForm } from "react-hook-form";
 import { AiOutlineGithub } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImGoogle3 } from "react-icons/im";
+import { RiImageAddFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
+
 import FormError from "../Shared/Formsrror/FormError";
 import "./Register.css";
 const Register = () => {
-   const  {register, handleSubmit} = useForm(); 
+   const { register, handleSubmit, formState: {errors} } = useForm();
+   const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
+   const handleRegister = (data) => {
+      const image = data.image[0]; 
+      const formData = new FormData(); 
+      formData.append('image', image); 
+      fetch(`https://api.imgbb.com/1/upload?key=${imageHostKey}`, {
+         method: 'POST', 
+         body: formData, 
+      })
+      .then(res =>res.json())
+      .then(imageData =>{
+         console.log(imageData, imageData.success); 
+         if(imageData.success){
+            const userPhoto = imageData.data.url; 
+         }
+      })
+      .catch(err => console.log(err));
+   }
    return (
-      <div className="flex items-center justify-center min-h-screen registerBg">
-         <div className=" h-[500px]  rounded-xl w-[330px] flex flex-col items-center justify-start bg-secondary opacity-90">
+      <div className="flex items-center justify-center min-h-screen  py-5 registerBg">
+         <div className=" min-h-[500px] py-2 h-auto   rounded-xl w-[360px] flex flex-col items-center justify-start bg-secondary opacity-90">
             <div className="w-60 border-1   font-medium capitalize text-xl  flex items-center justify-around gap-3 ">
                <Link
                   to="/register"
@@ -28,43 +48,89 @@ const Register = () => {
                <FaFacebook className="w-8 h-8 text-accent  "></FaFacebook>
             </div>
 
-            <form className="mt-5 w-[280px]  flex items-center justify-center flex-col gap-5">
-               <div className="w-full ">
+            <form className="mt-5 w-[320px]  flex items-center justify-center flex-col gap-5" onSubmit={handleSubmit(handleRegister)}>
+               <div className="w-full flex flex-col gap-1">
                   <input
                      type="text"
                      id="name"
                      placeholder="name"
                      className="pl-2  placeholder:capitalize   w-full  border-b-2 border-accent focus:border-b-primary focus:text-accent outline-none duration-1000 transition-all focus:italic text-lg  "
+                     {
+                        ...register('name', {required: "please enter  valid name"})
+                     }
                   />
+                  {
+                    errors.name && <FormError>{errors.name.message}</FormError>
+                  }
                </div>
-               <div className="w-full ">
+               <div className="w-full flex flex-col gap-1">
                   <input
                      type="email"
                      id="email"
                      placeholder="email"
                      className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg focus:text-accent "
+                  
+                        {
+                           ...register('email', {required: "please enter a email" , pattern: {  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                           message: "email must be valid",}})
+                          }
+                      
                   />
+                  {
+                    errors.email && <FormError>{errors.email.message}</FormError>
+                  }
+                  
                </div>
-               <div className="w-full ">
+               <div className="w-full flex flex-col gap-1">
                   <input
                      type="password"
                      id="password"
                      placeholder="password"
                      className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent"
+                     {
+                        ...register('password', {required: "please enter a password" , pattern: {  value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+                        message: "enter a valid password",}})
+                       }
                   />
                </div>
-               <div className="w-full ">
+               <div className="w-full flex flex-col gap-1">
                   <input
                      type="confirm"
                      id="confirm"
                      placeholder="confirm"
-                     className= "pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent"
+                     className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent"
+
+                     {
+                        ...register('confirm', {required: "please enter a confirm" , pattern: {  value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+                        message: "enter a valid confirm"}})
+                       }
                   />
                </div>
+               <div className="w-full flex flex-col gap-1">
+                     <label htmlFor="image" className="flex items-center gap-4 px-2 py-3 w-full 
+                       border-2 border-dashed">
+                     <RiImageAddFill className="w-20  h-20 text-primary"></RiImageAddFill>
+                     <input
+                     type="file"
+                     id="image"
+                     placeholder="image"
+                     className=""
+                     {
+                        ...register('image', {required: "upload an image"})
+                       }
+                  />
+                  </label>
+                  
+               </div>
                <div className="flex items-start flex-col gap-1 w-full">
-                     <label className="text-start text-accent font-bold capitalize">Please your account type:</label>
-                     <div className="flex items-center justify-center  gap-4">
-                     <label htmlFor="buyer" className="text-accent  font-bold  text-xl">
+                  <label className="text-start text-accent font-bold capitalize">
+                     Please your account type:
+                  </label>
+                  <div className="flex items-center justify-center  gap-4">
+                     <label
+                        htmlFor="buyer"
+                        className="text-accent  font-bold  text-xl"
+                     >
                         <input
                            type="radio"
                            name="role"
@@ -72,25 +138,38 @@ const Register = () => {
                            id="buyer"
                            checked
                            className="mr-2 "
+                           {
+                              ...register('role', {required: 'please  select what type account'})
+                           }
                         />
                         Buyer
                      </label>
-                     <label htmlFor="seller" className="text-accent  font-bold  text-xl">
+                     <label
+                        htmlFor="seller"
+                        className="text-accent  font-bold  text-xl"
+                     >
                         <input
                            type="radio"
                            name="role"
                            id="seller"
                            value="seller"
                            className="mr-2 "
-                           
+                           {
+                              ...register('role', {required: 'please  select what type account'})
+                           }
                         />
                         Seller
                      </label>
-                     </div>
+                     {
+                        errors.role && <FormError>{errors.role.message}</FormError>
+                     }
                   </div>
-               
+               </div>
+
                <div>
-                  <button className="text-center text-secondary px-3 py-3 rounded-2xl my-3 w-[284px]  bg-gradient-to-r from-primary hover:from-accent hover:to-accent ease-in-out font-bold   transition-all duration-[2s] to-info ">Register</button>
+                  <button  type='submit' className="text-center text-secondary px-3 py-3 rounded-2xl my-3 w-[320px]  bg-gradient-to-r from-primary hover:from-accent hover:to-accent ease-in-out font-bold   transition-all duration-[2s] to-info ">
+                     Register
+                  </button>
                </div>
             </form>
          </div>

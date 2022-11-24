@@ -3,3 +3,8 @@
    background-size: cover;
    background-position: center center; 
 }
+
+
+.registerBg input::-webkit-file-upload-button {
+   display: none;
+}
