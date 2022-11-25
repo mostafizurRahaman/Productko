@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Product = ({product}) => {
    const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description} = product;  
@@ -31,7 +32,9 @@ const Product = ({product}) => {
                  <p>{description}</p>
              </div>
              <div>
-               <button className='px-2 py-1 bg-secondary text-accent inline-block mr-2 rounded-xl font-bold  capitalize w-full text-xl '>Book Now</button>
+                <Link to={`/product/${_id}`}>
+                <button className='px-2 py-1 bg-secondary text-accent inline-block mr-2 rounded-xl font-bold  capitalize w-full text-xl '>Book Now</button>
+                </Link>
              </div>
              
              
