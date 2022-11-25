@@ -1,17 +1,38 @@
-import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { AiOutlineGithub } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImGoogle3 } from "react-icons/im";
 import { RiImageAddFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthProvider";
+import useToken from "../../hooks/useToken";
 
 import FormError from "../Shared/Formsrror/FormError";
 import "./Register.css";
 const Register = () => {
+   const [createdEmail, setCreatedEmail ] = useState(''); 
+   const {token} = useToken(createdEmail); 
+   const {createUser, addInfo} = useContext(AuthContext); 
    const { register, handleSubmit, formState: {errors} } = useForm();
+   const [generalErrors , setGeneralErrors] = useState(''); 
+   const navigate = useNavigate(); 
    const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
+
+   
+
+   if(token){
+      localStorage.setItem('productKoToken', token);
+      navigate('/'); 
+   }
    const handleRegister = (data) => {
+       setGeneralErrors('');
+      if(data.password !== data.confirm){
+         setGeneralErrors('password & confirm password not matched'); 
+         return; 
+      }
       const image = data.image[0]; 
       const formData = new FormData(); 
       formData.append('image', image); 
@@ -24,9 +45,54 @@ const Register = () => {
          console.log(imageData, imageData.success); 
          if(imageData.success){
             const userPhoto = imageData.data.url; 
+            createUser(data.email, data.password)
+            .then(res => {
+               const user = res.user; 
+                ;updateUser({displayName: data.name, photoURL: userPhoto}) 
+                const newUser = {
+                     name: data.name, 
+                     email: data.email, 
+                     photoURL: userPhoto, 
+                     role: data.role,                   
+                }
+                console.log('newUsers', newUser); 
+                  savedUser(newUser); 
+            })
+            .catch(err => {
+               setGeneralErrors(err.message); 
+            }); 
+
          }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+         setGeneralErrors(err.message); 
+      });
+   }
+
+
+   const updateUser = (profile) => {
+      addInfo(profile)
+      .then(() => {})
+      .catch(err => console.log(err)); 
+   }
+
+
+   const savedUser = (user) => {
+      fetch('http://localhost:5000/users', {
+         method: "POST", 
+         headers: {
+            'content-type': 'application/json', 
+         }, 
+         body: JSON.stringify(user)
+      })
+      .then(res =>res.json())
+      .then(data => {
+         if(data.acknowledged){
+            setCreatedEmail(user.email); 
+            toast.success(`Congratulations ${user.name}, your account created Successfully`); 
+         }
+      })
+      .catch(err => console.log(err)); 
    }
    return (
       <div className="flex items-center justify-center min-h-screen  py-5 registerBg">
@@ -92,10 +158,13 @@ const Register = () => {
                         message: "enter a valid password",}})
                        }
                   />
+                  {
+                    errors.password && <FormError>{errors.password.message}</FormError>
+                  }
                </div>
                <div className="w-full flex flex-col gap-1">
                   <input
-                     type="confirm"
+                     type="password"
                      id="confirm"
                      placeholder="confirm"
                      className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent"
@@ -105,6 +174,10 @@ const Register = () => {
                         message: "enter a valid confirm"}})
                        }
                   />
+                  {
+                    errors.confirm && <FormError>{errors.confirm.message}</FormError>
+                  }
+                  
                </div>
                <div className="w-full flex flex-col gap-1">
                      <label htmlFor="image" className="flex items-center gap-4 px-2 py-3 w-full 
@@ -116,10 +189,13 @@ const Register = () => {
                      placeholder="image"
                      className=""
                      {
-                        ...register('image', {required: "upload an image"})
+                        ...register('image', {required: "must upload an image"})
                        }
                   />
                   </label>
+                  {
+                     errors.image && <FormError>{errors.image.message}</FormError>
+                  }
                   
                </div>
                <div className="flex items-start flex-col gap-1 w-full">
@@ -165,12 +241,18 @@ const Register = () => {
                      }
                   </div>
                </div>
+               <div>
+                  {
+                     generalErrors && <FormError>{generalErrors}</FormError>
+                  }
+               </div>
 
                <div>
                   <button  type='submit' className="text-center text-secondary px-3 py-3 rounded-2xl my-3 w-[320px]  bg-gradient-to-r from-primary hover:from-accent hover:to-accent ease-in-out font-bold   transition-all duration-[2s] to-info ">
                      Register
                   </button>
                </div>
+               
             </form>
          </div>
       </div>

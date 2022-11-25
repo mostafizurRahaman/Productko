@@ -1,0 +1,3 @@
+.addProduct input::-webkit-file-upload-button {
+   display: none;
+}

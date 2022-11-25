@@ -1,17 +1,39 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link,  useLocation, useNavigate } from 'react-router-dom';
 import {ImGoogle3} from "react-icons/im";
 import {AiOutlineGithub} from 'react-icons/ai';  
 import { FaFacebook } from 'react-icons/fa';
 import './Login.css'; 
 import { useForm } from 'react-hook-form';
-import { EmailAuthCredential } from 'firebase/auth';
 import FormError from '../Shared/Formsrror/FormError';
+import { AuthContext } from '../../Context/AuthProvider';
+import useToken from '../../hooks/useToken'; 
+
 const Login = () => {
    const {register, handleSubmit, formState:{errors}} = useForm(); 
+   const {LogIn} = useContext(AuthContext); 
+   const [loginEmail, setLoginEmail] = useState(''); 
+   const [generalError, setGeneralError] = useState(''); 
+   const navigate = useNavigate(); 
+   const location = useLocation(); 
+   const from = location.state?.from?.pathname || '/'; 
+   const {token} = useToken(loginEmail);
+   
+   if(token){
+      navigate(from , {replace: true}); 
+   }
 
    const handleLogin = (data) => {
-         console.log(data); 
+         setGeneralError('');
+         LogIn(data.email, data.password)
+         .then(res =>{
+            const user = res.user; 
+            setLoginEmail(user.email); 
+            console.log(user); 
+         })
+         .catch(err =>{
+            setGeneralError(err.message); 
+         }); 
    }
    return (
       <div className='flex items-center justify-center min-h-screen  loginBg  '   >
@@ -60,7 +82,11 @@ const Login = () => {
                      errors.password && <FormError>{errors.password.message}</FormError>
                   }
                </div>
-               
+               <div>
+                  {
+                     generalError && <FormError>{generalError}</FormError>
+                  }
+               </div>
                
                <div>
                   <button className="text-center text-secondary px-3 py-3 rounded-2xl my-3 w-[284px]  bg-gradient-to-r from-primary hover:from-accent hover:to-accent ease-in-out font-bold   transition-all duration-[2s] to-info " type='submit'>Login</button>

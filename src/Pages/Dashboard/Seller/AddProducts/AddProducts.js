@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { RiImageAddFill } from "react-icons/ri";
 import FormError from "../../../Shared/Formsrror/FormError";
-
+import './AddProducts.css' ; 
 const AddProducts = () => {
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
@@ -21,18 +22,18 @@ const AddProducts = () => {
       console.log(data);
    };
    return (
-      <div>
+      <div className="addProduct ">
          <div className="  my-6 flex items-center justify-center">
             <form
                onSubmit={handleSubmit(handleAddProduct)}
-               className="bg-neutral w-3/5 p-5 rounded-2xl"
+               className="bg-neutral w-11/12 md:w-3/5 p-5 rounded-2xl"
             >
-               <h2 className="text-4xl mb- font-bold text-center capitalize text-secondary ">
+               <h2 className="text-4xl mb-3 font-bold text-center capitalize text-secondary ">
                   Add Your product
                </h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-secondary ">
                   <div>
-                     <label htmlFor="sellerName">Seller Name</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="sellerName">Seller Name</label>
                      <input
                         type="text"
                         placeholder="Name"
@@ -47,7 +48,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="product-name">Product Name:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="product-name">Product Name:</label>
                      <input
                         type="text"
                         placeholder="product name"
@@ -62,7 +63,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="email">Email:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="email">Email:</label>
                      <input
                         type="email"
                         placeholder="email"
@@ -78,7 +79,7 @@ const AddProducts = () => {
                      />
                   </div>
                   <div>
-                     <label htmlFor="phone">phone:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="phone">phone:</label>
                      <input
                         type="text"
                         placeholder="phone number"
@@ -97,7 +98,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="original-price">Original price:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="original-price">Original price:</label>
                      <input
                         type="text"
                         placeholder="original-price"
@@ -116,7 +117,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="resellPrice">reselling price:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="resellPrice">reselling price:</label>
                      <input
                         type="text"
                         placeholder="resellPrice"
@@ -135,7 +136,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="yearsOfUse">Years of Use: </label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="yearsOfUse">Years of Use: </label>
                      <input
                         type="text"
                         placeholder="years of use"
@@ -150,7 +151,7 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label htmlFor="location">location</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="location">location</label>
                      <input
                         type="text"
                         placeholder="location"
@@ -162,8 +163,8 @@ const AddProducts = () => {
                      />
                   </div>
 
-                  <div>
-                     <label htmlFor="product-category">category</label>
+                  <div className="">
+                     <label className="capitalize font-semibold text-xl" htmlFor="product-category">category</label>
                      <div>
                         <select
                            name="category"
@@ -183,15 +184,16 @@ const AddProducts = () => {
                            <FormError>{errors.category.message}</FormError>
                         )}
                      </div>
-                  </div>
-                  <div>
-                     <label htmlFor="condition">Condition</label>
-                     <label htmlFor="excellent">
+                     <div>
+                        <label className="capitalize text-xl font-semibold my-2 block" htmlFor="condition">Condition</label>
+                        <div className="flex  gap-3 capitalize">
+                        <label htmlFor="excellent">
                         <input
                            type="radio"
                            name="condition"
                            value="excellent"
                            id="excellent"
+                           className="mr-1"
                            {...register("condition", {
                               required: "must select an condition",
                            })}
@@ -204,6 +206,7 @@ const AddProducts = () => {
                            name="condition"
                            id="good"
                            value="good"
+                           className="mr-1"
                            {...register("condition", {
                               required: "must select an condition",
                            })}
@@ -216,22 +219,47 @@ const AddProducts = () => {
                            name="condition"
                            value="fair"
                            id="fair"
+                           className="mr-1"
                            {...register("condition", {
                               required: "must select an condition",
                            })}
                         />
                         fair
                      </label>
+                        </div>
                      {errors.condition && (
                         <FormError>{errors.condition.message}</FormError>
                      )}
+                   </div>
                   </div>
+                  <div className="w-full flex flex-col gap-1">
+                     <label htmlFor="image" className="text-xl capitalize font-semibold ">Upload Image:</label>
+                     <label htmlFor="image" className="flex items-center gap-4 px-2 py-4 w-full 
+                       border-2 border-dashed">
+                     <RiImageAddFill className="w-16  h-16 text-primary"></RiImageAddFill>
+                     <input
+                     type="file"
+                     id="image"
+                     placeholder="image"
+                     className="placeholder:text-accent text-base"
+                     {
+                        ...register('image', {required: "must upload an image"})
+                       }
+                  />
+                  </label>
+                  {
+                     errors.image && <FormError>{errors.image.message}</FormError>
+                  }
+                  
                </div>
+                  
+               </div>
+             
 
-               <div>
+               <div className="flex items-center justify-center  mt-4">
                   <button
                      type="submit"
-                     className="bg-primary text-secondary text-xl px-6 rounded-3xl hover:bg-transparent hover:text-primary  hover:border-2 border-primary transition-all duration-500   py-1"
+                     className="bg-primary text-secondary text-xl px-6 rounded-3xl hover:bg-transparent hover:text-primary  hover:border-2 border-primary transition-all duration-500   py-1 "
                   >
                      Add Product{" "}
                   </button>
