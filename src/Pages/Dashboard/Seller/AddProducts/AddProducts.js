@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { RiImageAddFill } from "react-icons/ri";
+import { useNavigate  } from "react-router-dom";
+import { AuthContext } from "../../../../Context/AuthProvider";
 import FormError from "../../../Shared/Formsrror/FormError";
 import './AddProducts.css' ; 
 const AddProducts = () => {
+   const {user} = useContext(AuthContext); 
+   const navigate = useNavigate(); 
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
@@ -13,14 +18,74 @@ const AddProducts = () => {
          return data;
       },
    });
+
+
+   
    const {
       register,
-      handleSubmit,
+      handleSubmit,  
       formState: { errors },
    } = useForm();
+   if(!user){
+      return <h1>Loading..................</h1>
+   }
+
+
+   const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
    const handleAddProduct = (data) => {
-      console.log(data);
+         const image = data.image[0]; 
+         const formData = new FormData(); 
+         formData.append('image', image); 
+         fetch(`https://api.imgbb.com/1/upload?key=${imageHostKey}`, {
+            method: "POST", 
+            body: formData
+         })
+         .then(res => res.json())
+         .then(imageData => {
+              if(imageData.success){
+                  const img = imageData.data.url; 
+                  const date = new Date(); 
+                  const currentTime = date.toLocaleTimeString(); 
+                  const currentDate = date.toLocaleDateString(); 
+                  const product = {
+                     sellerName: data.sellerName, 
+                     email: data.email, 
+                     phone: data.phone, 
+                     productName: data.productName, 
+                     originalPrice: parseFloat(data.originalPrice), 
+                     resellPrice: parseFloat(data.resellPrice), 
+                     image : img, 
+                     location: data.sellerLocation,  
+                     postDate: currentDate, 
+                     postTime: currentTime, 
+                     category : data.category, 
+                     condition: data.condition, 
+                     yearsOfUse: data.yearsOfUse, 
+                     description: data.description,
+                  }
+                  console.log(product); 
+                  fetch(`http://localhost:5000/products`, {
+                     method: 'POST', 
+                     headers: { 
+                        'content-type': 'application/json', 
+                        authorization: `bearer ${localStorage.getItem('productKoToken')}`
+                     }, 
+                     body: JSON.stringify(product)
+                  })
+                  .then(res =>res.json())
+                  .then(data => {
+                     if(data.acknowledged){
+                        toast.success(`${product.productName} is added successfully`); 
+                     }
+                  })
+                  .catch(err => console.log(err)); 
+              }
+         })
+         .catch(err => console.log(err)); 
    };
+
+
+  
    return (
       <div className="addProduct ">
          <div className="  my-6 flex items-center justify-center">
@@ -29,30 +94,28 @@ const AddProducts = () => {
                className="bg-neutral w-11/12 md:w-3/5 p-5 rounded-2xl"
             >
                <h2 className="text-4xl mb-3 font-bold text-center capitalize text-secondary ">
-                  Add Your product
+                  Add Your product 
                </h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-secondary ">
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="sellerName">Seller Name</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="sellerName">Seller Name :</label>
                      <input
                         type="text"
                         placeholder="Name"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
                         id="sellerName"
-                        {...register("sellerName", {
-                           required: "must enter your name",
-                        })}
+                        defaultValue={user?.displayName}
+                        readOnly
+                        {...register("sellerName")}
                      />
-                     {errors.sellerName && (
-                        <FormError>{errors.sellerName.message}</FormError>
-                     )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="product-name">Product Name:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="product-name">Product Name :</label>
                      <input
                         type="text"
                         placeholder="product name"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
+                        
                         id="product-name"
                         {...register("productName", {
                            required: "must enter product name",
@@ -63,27 +126,26 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="email">Email:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="email">Email :</label>
                      <input
                         type="email"
                         placeholder="email"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
+                        defaultValue={user?.email}
+                        readOnly
                         id="seller-email"
-                        {...register("email", {
-                           required: "must enter product name",
-                           pattern: {
-                              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                              message: "email must be valid",
-                           },
-                        })}
+                        {...register("email")}
                      />
+                     {
+                        errors.email && <FormError>{errors.email.message}</FormError>
+                     }
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="phone">phone:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="phone">phone :</label>
                      <input
                         type="text"
                         placeholder="phone number"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
                         id="seller-number"
                         {...register("phone", {
                            required: "must enter phone number",
@@ -98,11 +160,11 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="original-price">Original price:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="original-price">Original price :</label>
                      <input
                         type="text"
                         placeholder="original-price"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
                         id="original-price"
                         {...register("originalPrice", {
                            required: "must enter the price: ",
@@ -117,11 +179,11 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="resellPrice">reselling price:</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="resellPrice">reselling price :</label>
                      <input
                         type="text"
                         placeholder="resellPrice"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent"
                         id="resellPrice"
                         {...register("resellPrice", {
                            required: "must enter a price: ",
@@ -136,11 +198,11 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="yearsOfUse">Years of Use: </label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="yearsOfUse">Years of Use : </label>
                      <input
                         type="text"
                         placeholder="years of use"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent "
                         id="yearsOfUse"
                         {...register("yearsOfUse", {
                            required: "must enter how many years use.",
@@ -151,20 +213,23 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="location">location</label>
+                     <label className="capitalize text-xl font-semibold" htmlFor="location">location :</label>
                      <input
                         type="text"
                         placeholder="location"
-                        className="input w-full border-2 border-neutral"
+                        className="input w-full border-2 border-neutral text-accent "
                         id="location"
                         {...register("sellerLocation", {
                            required: "enter a location",
                         })}
                      />
+                     {
+                        errors.sellerLocation && <FormError>{errors.sellerLocation.message}</FormError>
+                     }
                   </div>
 
                   <div className="">
-                     <label className="capitalize font-semibold text-xl" htmlFor="product-category">category</label>
+                     <label className="capitalize font-semibold text-xl" htmlFor="product-category">category:</label>
                      <div>
                         <select
                            name="category"
@@ -185,7 +250,7 @@ const AddProducts = () => {
                         )}
                      </div>
                      <div>
-                        <label className="capitalize text-xl font-semibold my-2 block" htmlFor="condition">Condition</label>
+                        <label className="capitalize text-xl font-semibold my-2 block" htmlFor="condition">Condition :</label>
                         <div className="flex  gap-3 capitalize">
                         <label htmlFor="excellent">
                         <input
@@ -255,7 +320,15 @@ const AddProducts = () => {
                   
                </div>
              
-
+               <div className="flex gap-2 flex-col mt-3">
+                  <label htmlFor="message" className="text-white font-semibold capitalize text-xl " >message :</label>
+                    <textarea name="message" id="message" cols="30" rows="5" className="rounded-lg text-accent p-3" placeholder="Message"
+                     {...register("description", {required:"must enter a description", minLength:{value: 30 , message: 'description must be 30 character'}} )}
+                    ></textarea> 
+                    {
+                     errors.description && <FormError>{errors.description.message}</FormError>
+                    }
+                </div>
                <div className="flex items-center justify-center  mt-4">
                   <button
                      type="submit"

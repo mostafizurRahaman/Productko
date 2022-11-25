@@ -19,14 +19,13 @@ const Register = () => {
    const { register, handleSubmit, formState: {errors} } = useForm();
    const [generalErrors , setGeneralErrors] = useState(''); 
    const navigate = useNavigate(); 
-   const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
-
-   
+   const imageHostKey = process.env.REACT_APP_Image_BB_KEY;    
 
    if(token){
-      localStorage.setItem('productKoToken', token);
-      navigate('/'); 
-   }
+     navigate('/'); 
+   } 
+
+
    const handleRegister = (data) => {
        setGeneralErrors('');
       if(data.password !== data.confirm){
