@@ -8,6 +8,8 @@ import Home from "../../Pages/Home/Home/Home"
 import Login from "../../Pages/Login/Login"
 import Register from "../../Pages/Register/Register"
 import axios from 'axios'; 
+import PrivateRoute from "../PrivateRoute/PrivateRoute"
+import BookedProduct from "../../Pages/BookedProduct/BookedProduct"
 
 
 const Routes = createBrowserRouter([
@@ -38,17 +40,26 @@ const Routes = createBrowserRouter([
                const res = await  axios.get(`http://localhost:5000/categories/${params.id}`); 
                return res.data;
             }
+         }, 
+         {
+            path: '/product/:id', 
+            element:  <BookedProduct></BookedProduct>, 
+            loader: async({params}) => {
+               const res = await axios.get(`http://localhost:5000/products/${params.id}`);
+               console.log(res); 
+               return res.data; 
+            }
          }
         
       ]
    }, 
    {
       path: '/dashboard', 
-      element: <DashboardLayout></DashboardLayout>, 
+      element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>, 
       children: [
          {
             path: '/dashboard/addProducts', 
-            element: <AddProducts></AddProducts> 
+            element: <AddProducts></AddProducts>,
          }
       ]
    }

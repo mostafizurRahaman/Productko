@@ -6,6 +6,7 @@ import { RiImageAddFill } from "react-icons/ri";
 import { useNavigate  } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import FormError from "../../../Shared/Formsrror/FormError";
+import Loading from "../../../Shared/Loading/Loading";
 import './AddProducts.css' ; 
 const AddProducts = () => {
    const {user} = useContext(AuthContext); 
@@ -27,7 +28,7 @@ const AddProducts = () => {
       formState: { errors },
    } = useForm();
    if(!user){
-      return <h1>Loading..................</h1>
+      return <Loading></Loading>
    }
 
 

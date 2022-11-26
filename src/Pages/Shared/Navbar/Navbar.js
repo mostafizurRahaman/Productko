@@ -23,14 +23,14 @@ const Navbar = () => {
            <Link to='/'>  <h2>Product<span className=' text-accent '>ko</span></h2></Link>
          </div>
          <div className={` text-secondary md:text-primary flex flex-col absolute md:static top-24 right-0 md:flex-row items-center pt-5 md:pt-0  md:justify-center gap-5 md:text-xl bg-neutral md:bg-transparent  w-full  md:w-auto  h-screen md:h-auto transition-all md:transition-all duration-1000 bg-opacity-95 ${show ? 'top-24 right-0' : "right-[-999px]"} `}>
-            <Link className='bg-primary text-secondary text-xl px-6 rounded-3xl hover:bg-transparent hover:text-primary  hover:border-2 border-primary transition-all duration-500  py-1 ' onClick={()=>setShow(!show)} to='/home'>Home</Link>
-            <Link className='bg-primary text-secondary text-xl px-6 rounded-3xl hover:bg-transparent hover:text-primary  hover:border-2 border-primary transition-all duration-500  py-1 ' onClick={()=>setShow(!show)} to='/dashboard/addProducts'>Add Products</Link>
-            <Link className='bg-primary text-secondary text-xl px-6 rounded-3xl hover:bg-transparent hover:text-primary  hover:border-2 border-primary transition-all duration-500  py-1 '  onClick={()=>setShow(!show)} to='/blog'>Blog</Link>
+            <Link onClick={()=>setShow(!show)} to='/home'>Home</Link>
+            <Link   onClick={()=>setShow(!show)} to='/dashboard'>Dashboard</Link>
            {
             user?.uid 
             ? 
 
             <>
+                <Link   onClick={()=>setShow(!show)} to='/dashboard'>Blog</Link>
                <button onClick={()=>{
                   setShow(!show)
                   handleLogOut(); 
