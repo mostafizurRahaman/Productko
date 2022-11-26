@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { AiOutlineConsoleSql } from 'react-icons/ai';
 import { useLoaderData } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
 import FormError from '../Shared/Formsrror/FormError';
@@ -11,7 +10,7 @@ const BookedProduct = () => {
    console.log(product); 
    const {register, handleSubmit, formState:{errors} } = useForm(); 
    const {user} = useContext(AuthContext); 
-   const {_id,  productName,email, resellPrice, category } = product; 
+   const {_id,  productName,email, resellPrice, category, image } = product; 
 
    const handleBooking = (data) => {
        const date = new Date(); 
@@ -23,6 +22,7 @@ const BookedProduct = () => {
          email: user.email, 
          buyerName: user?.displayName, 
          location: data.location,
+         image: image, 
          phone: data.phone,  
          price: resellPrice, 
          sellerEmail :email, 

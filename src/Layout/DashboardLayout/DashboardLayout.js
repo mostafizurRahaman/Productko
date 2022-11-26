@@ -34,7 +34,7 @@ const DashboardLayout = () => {
                      className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
                      to="/dashboard/my-orders"
                   >
-                     ADD Product
+                     My Orders
                   </Link>
                
             </div>
