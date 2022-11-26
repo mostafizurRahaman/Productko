@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { AiOutlineConsoleSql } from 'react-icons/ai';
 import { useLoaderData } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
 import FormError from '../Shared/Formsrror/FormError';
@@ -28,7 +30,21 @@ const BookedProduct = () => {
          orderDate: currentDate, 
          category_id: category, 
        }
-       
+       fetch(`http://localhost:5000/bookings`, {
+         method: 'POST', 
+         headers: {
+            'content-type': 'application/json', 
+
+         }, 
+         body: JSON.stringify(bookedProduct)
+       })
+       .then(res =>res.json())
+       .then(data => {
+         if(data.acknowledged){
+            toast.success(`${productName} is Booked.`)
+         }
+       })
+       .catch(err =>console.log(err)); 
 
    }
    return (
