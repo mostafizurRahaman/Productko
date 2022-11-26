@@ -1,13 +1,15 @@
 
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
-import { AuthContext } from "../../../Context/AuthProvider";
-import Loading from "../../Shared/Loading/Loading";
-import {AiFillCloseCircle, AiOutlineConsoleSql} from 'react-icons/ai'; 
+
+import {AiFillCloseCircle} from 'react-icons/ai'; 
 import toast from "react-hot-toast";
+import { AuthContext } from "../../../../Context/AuthProvider";
+import Loading from "../../../Shared/Loading/Loading";
 
 const MyProduct = () => {
-   const {user} = useContext(AuthContext); 
+   const {user} = useContext(AuthContext);
+
   
   
    const {data:products=[], isLoading, refetch}  = useQuery({
@@ -65,19 +67,20 @@ const MyProduct = () => {
          <div className="mt-5 ">
             <div className="overflow-x-auto">
                <table className="table table-compact table-zebra  w-full">
-                  <thead className="text-2xl font-semibold text-primary bg-accent ">
+                  <thead className="text-2xl font-semibold text-primary bg-accent text-center ">
                      <tr >
                         <th>S.I.</th>
                         <th>product</th>
                         <th>posted date</th>
                         <th>posted time</th>
                         <th>price</th>
-                        <th>Booked </th>
+                        <th>isBooked </th>
+                        <th>payment status</th>
                         <th>Action</th>                        
                         <th>advertise</th>
                      </tr>
                   </thead>
-                  <tbody className="text-accent font-semibold ">
+                  <tbody className="text-accent font-semibold text-center ">
                      {
                         products.map((product, idx) => <tr key={product._id}>
                            <th>{idx + 1}</th>
@@ -85,9 +88,16 @@ const MyProduct = () => {
                            <td>{product.postDate}</td>
                            <td>{product.postTime}</td>
                            <td>{product.resellPrice}</td>
-                           <td>{product.isBooked ? <span className="text-secondary px-2 py-1 rounded bg-red-500  font-bold capitalize ">Booked</span> : <span className="text-green-800 font-bold uppercase ">available</span> }</td>
-                           <td>{product.isBooked || <button onClick={()=> handleDelete(product)}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}</td>
-                           <td>{product.isBooked || <button onClick={()=> handleAdvertise(product)} className={`btn btn-sm   text-secondary   font-bold text-base ${  
+                           <td>{product.isBooked ? <span className="text-secondary px-2 py-1 rounded bg-red-500  font-bold capitalize ">Booked</span> : <span className="text-green-500 text-center font-bold uppercase ">available</span> }</td>
+                           <td className="">
+                              {
+                                 product.paymentStatus ?<span className="text-red-500 font-bold capitalize">sold</span> : <span className="text-green-500 font-bold capitalize"> 
+                                 available</span>
+                              }
+                           </td>
+                           <td>{(product.isBooked || product.paymentStatus) || <button onClick={()=> handleDelete(product)}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}</td>
+                          
+                           <td>{(product.isBooked || product.paymentStatus)|| <button onClick={()=> handleAdvertise(product)} className={`btn btn-sm   text-secondary   font-bold text-base ${  
                               product.isAdvertised ? "bg-red-500" : "bg-primary"
                            } `} disabled={product.isAdvertised}>
                               {

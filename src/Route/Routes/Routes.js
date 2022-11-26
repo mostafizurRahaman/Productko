@@ -1,4 +1,3 @@
-import { async } from "@firebase/util"
 import { createBrowserRouter } from "react-router-dom"
 import DashboardLayout from "../../Layout/DashboardLayout/DashboardLayout"
 import Main from "../../Layout/Main"
@@ -10,7 +9,9 @@ import Register from "../../Pages/Register/Register"
 import axios from 'axios'; 
 import PrivateRoute from "../PrivateRoute/PrivateRoute"
 import BookedProduct from "../../Pages/BookedProduct/BookedProduct"
-import MyProduct from "../../Pages/Dashboard/MyProduct/MyProduct"
+
+import MyOrders from "../../Pages/Dashboard/Buyer/MyOrders/MyOrders"
+import MyProduct from "../../Pages/Dashboard/Seller/MyProduct/MyProduct"
 
 
 const Routes = createBrowserRouter([
@@ -65,6 +66,10 @@ const Routes = createBrowserRouter([
          {
             path:"/dashboard/myProducts", 
             element: <MyProduct></MyProduct>
+         },
+         {
+            path:"/dashboard/my-orders", 
+            element: <MyOrders></MyOrders>
          }
       ]
    }
