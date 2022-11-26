@@ -10,6 +10,7 @@ import Register from "../../Pages/Register/Register"
 import axios from 'axios'; 
 import PrivateRoute from "../PrivateRoute/PrivateRoute"
 import BookedProduct from "../../Pages/BookedProduct/BookedProduct"
+import MyProduct from "../../Pages/Dashboard/MyProduct/MyProduct"
 
 
 const Routes = createBrowserRouter([
@@ -60,6 +61,10 @@ const Routes = createBrowserRouter([
          {
             path: '/dashboard/addProducts', 
             element: <AddProducts></AddProducts>,
+         }, 
+         {
+            path:"/dashboard/myProducts", 
+            element: <MyProduct></MyProduct>
          }
       ]
    }
