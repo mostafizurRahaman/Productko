@@ -46,7 +46,13 @@ const MyProduct = () => {
          method: "Delete"
       })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+         console.log(data);
+         if(data.deletedCount > 0){
+               toast.success(`${product.name } is deleted  Successfully`); 
+               refetch(); 
+         }
+      })
       .catch(err => console.log(err)); 
    }
    return (
@@ -80,7 +86,7 @@ const MyProduct = () => {
                            <td>{product.postTime}</td>
                            <td>{product.resellPrice}</td>
                            <td>{product.isBooked ? <span className="text-secondary px-2 py-1 rounded bg-red-500  font-bold capitalize ">Booked</span> : <span className="text-green-800 font-bold uppercase ">available</span> }</td>
-                           <td>{product.isBooked || <button onClick={(handleDelete(product))}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}</td>
+                           <td>{product.isBooked || <button onClick={()=> handleDelete(product)}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}</td>
                            <td>{product.isBooked || <button onClick={()=> handleAdvertise(product)} className={`btn btn-sm   text-secondary   font-bold text-base ${  
                               product.isAdvertised ? "bg-red-500" : "bg-primary"
                            } `} disabled={product.isAdvertised}>
