@@ -11,7 +11,7 @@ const DashboardLayout = () => {
          <Navbar></Navbar>
          <div className="w-full flex  relative ">
             <div
-               className={`text-secondary  flex flex-col  w-60 bg-accent min-h-screen duration-1000 transition-all md:transition-none absolute md:sticky md:top-24 md:left-0 ${
+               className={`text-secondary  flex flex-col  w-60 bg-accent min-h-screen duration-1000 transition-all md:transition-none absolute md:sticky  md:top-24  md:left-0 z-50 md:z-0  ${
                   sideMenu
                      ? "left-0 bg-opacity-90 md:bg-opacity-100"
                      : "left-[-999px] "

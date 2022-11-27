@@ -36,6 +36,20 @@ const AllSellers = () => {
          })
          .catch((err) => console.log(err));
    };
+
+   const handleDelete = (seller) => {
+     fetch(`http://localhost:5000/users/${seller._id}`, {
+      method: "delete",
+     })
+     .then(res => res.json())
+     .then(data => {
+         if(data.acknowledged){
+            toast.success(`${seller.name} is successfully deleted`); 
+            refetch(); 
+         }
+     })
+
+   }
    console.log(sellers);
    return (
       <div className="overflow-x-auto mx-auto">
@@ -76,7 +90,7 @@ const AllSellers = () => {
                      </td>
 
                      <td>
-                        <RiDeleteBin2Fill className="text-2xl text-center mx-auto text-red-500 cursor-pointer hover:text-1xl"></RiDeleteBin2Fill>
+                        <RiDeleteBin2Fill onClick={()=>{handleDelete(seller)}} className="text-2xl text-center mx-auto text-red-500 cursor-pointer hover:text-1xl"></RiDeleteBin2Fill>
                      </td>
                   </tr>
                ))}
