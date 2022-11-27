@@ -15,6 +15,8 @@ import MyProduct from "../../Pages/Dashboard/Seller/MyProduct/MyProduct"
 import AllSellers from "../../Pages/Dashboard/Admin/AllSellers/AllSellers"
 import AllBuyer from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import AllBuyers from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
+import Payment from "../../Pages/Dashboard/Payment/Payment"
+import { async } from "@firebase/util"
 
 
 const Routes = createBrowserRouter([
@@ -81,6 +83,13 @@ const Routes = createBrowserRouter([
          {
             path: '/dashboard/buyers', 
             element: <AllBuyers></AllBuyers>
+         }, 
+         {
+            path: '/dashboard/payment/:id', 
+            element: <Payment></Payment>, 
+            loader: async({params}) => {
+               const res = await fetch(``)
+            }
          }
       ]
    }

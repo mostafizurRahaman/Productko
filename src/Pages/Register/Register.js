@@ -15,14 +15,14 @@ import "./Register.css";
 const Register = () => {
    const [createdEmail, setCreatedEmail ] = useState(''); 
    const {token} = useToken(createdEmail); 
-   const {createUser, addInfo} = useContext(AuthContext); 
+   const {createUser, addInfo, GoogleSignIn} = useContext(AuthContext); 
    const { register, handleSubmit, formState: {errors} } = useForm();
    const [generalErrors , setGeneralErrors] = useState(''); 
    const navigate = useNavigate(); 
    const imageHostKey = process.env.REACT_APP_Image_BB_KEY;    
 
    if(token){
-     navigate('/'); 
+      navigate('/'); 
    } 
 
 
@@ -75,6 +75,22 @@ const Register = () => {
    }
 
 
+   const handleGoogleLogin  = () => {
+      setGeneralErrors(''); 
+      GoogleSignIn()
+      .then(res => {
+         const user = res.user; 
+         const newUser = {
+            name: user.displayName, 
+            email:user.email, 
+            photoURL: user.photoURL, 
+            role: 'buyer', 
+         }
+         savedUser(newUser); 
+      })
+      .catch(err => console.log(err)); 
+   }
+
    const savedUser = (user) => {
       fetch('http://localhost:5000/users', {
          method: "POST", 
@@ -85,7 +101,7 @@ const Register = () => {
       })
       .then(res =>res.json())
       .then(data => {
-         if(data.acknowledged){
+         if(data.acknowledged || data.alreadyAdded){
             setCreatedEmail(user.email); 
             toast.success(`Congratulations ${user.name}, your account created Successfully`); 
          }
@@ -107,7 +123,7 @@ const Register = () => {
                </Link>
             </div>
             <div className="flex items-center justify-center gap-5 mt-8">
-               <ImGoogle3 className="w-8 h-8 text-accent  "></ImGoogle3>
+               <ImGoogle3 onClick={handleGoogleLogin} className="w-8 h-8 text-accent  "></ImGoogle3>
                <AiOutlineGithub className="w-8 h-8 text-accent  "></AiOutlineGithub>
                <FaFacebook className="w-8 h-8 text-accent  "></FaFacebook>
             </div>

@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useLoaderData } from 'react-router-dom';
+import {  useLoaderData, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
 import FormError from '../Shared/Formsrror/FormError';
 
 const BookedProduct = () => {
    const product = useLoaderData(); 
-   console.log(product); 
+   const navigate  = useNavigate(); 
    const {register, handleSubmit, formState:{errors} } = useForm(); 
    const {user} = useContext(AuthContext); 
    const {_id,  productName,email, resellPrice, category, image } = product; 
@@ -42,6 +42,7 @@ const BookedProduct = () => {
        .then(data => {
          if(data.acknowledged){
             toast.success(`${productName} is Booked.`)
+            navigate('/dashboard/my-orders')
          }
        })
        .catch(err =>console.log(err)); 
