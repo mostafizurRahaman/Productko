@@ -8,10 +8,11 @@ import { useForm } from 'react-hook-form';
 import FormError from '../Shared/Formsrror/FormError';
 import { AuthContext } from '../../Context/AuthProvider';
 import useToken from '../../hooks/useToken'; 
+import toast from 'react-hot-toast';
 
 const Login = () => {
    const {register, handleSubmit, formState:{errors}} = useForm(); 
-   const {LogIn} = useContext(AuthContext); 
+   const {LogIn, GoogleSignIn} = useContext(AuthContext); 
    const [loginEmail, setLoginEmail] = useState(''); 
    const [generalError, setGeneralError] = useState(''); 
    const navigate = useNavigate(); 
@@ -35,6 +36,42 @@ const Login = () => {
             setGeneralError(err.message); 
          }); 
    }
+
+
+   const handleGoogleLogin  = () => {
+      setGeneralError(''); 
+      GoogleSignIn()
+      .then(res => {
+         const user = res.user; 
+         const newUser = {
+            name: user.displayName, 
+            email:user.email, 
+            photoURL: user.photoURL, 
+            role: 'buyer', 
+         }
+         savedUser(newUser); 
+      })
+      .catch(err => console.log(err)); 
+   }
+
+
+   const savedUser = (user) => {
+      fetch('http://localhost:5000/users', {
+         method: "POST", 
+         headers: {
+            'content-type': 'application/json', 
+         }, 
+         body: JSON.stringify(user)
+      })
+      .then(res =>res.json())
+      .then(data => {
+         if(data.acknowledged || data.alreadyAdded){
+            setLoginEmail(user.email); 
+            toast.success(`Congratulations ${user.name}, your account created Successfully`); 
+         }
+      })
+      .catch(err => console.log(err)); 
+   }
    return (
       <div className='flex items-center justify-center min-h-screen  loginBg  '   >
             <div className=' min-h-[350px] h-auto px-5 rounded-xl w-[330px] flex flex-col items-center justify-start bg-secondary '>
@@ -44,7 +81,7 @@ const Login = () => {
               
                </div>
                <div className='flex items-center justify-center gap-5  mt-8'>
-                  <ImGoogle3 className='w-8 h-8 text-accent  '></ImGoogle3>                 
+                  <ImGoogle3 onClick={handleGoogleLogin} className='w-8 h-8 text-accent  '></ImGoogle3>                 
                   <AiOutlineGithub className='w-8 h-8 text-accent  '></AiOutlineGithub>
                   <FaFacebook className='w-8 h-8 text-accent  '></FaFacebook>
                </div>
@@ -71,7 +108,7 @@ const Login = () => {
                      type="password"
                      id="password"
                      placeholder="password"
-                     className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent"
+                     className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg  focus:text-accent" 
 
                      {
                         ...register('password', {required: "please enter a password" , pattern: {  value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,

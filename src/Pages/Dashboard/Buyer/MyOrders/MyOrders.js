@@ -17,16 +17,16 @@ const MyOrders = () => {
 
    console.log(orders);
    return (
-      <div className=" w-full">
+      <div className="w-full">
          <div className="flex items-center justify-center ">
             <h2 className="text-center  text-3xl md:text-4xl  font-bold inline-block text-secondary   border-b-2 border-secondary   pb-3 uppercase ">
                My orders
             </h2>
          </div>
          <div className="mt-5 ">
-            <div className="overflow-x-auto">
-               <table className="table table-compact table-zebra  w-full text-center ">
-                  <thead className="text-2xl font-semibold text-primary bg-accent ">
+            <div className="overflow-x-auto w-full ">
+               <table className="table table-compact w-full text-center ">
+                  <thead className="text-xl  md:text-2xl  font-semibold text-primary bg-accent ">
                      <tr>
                         <th>S.I.</th>
                         <th>Buyer Name</th>

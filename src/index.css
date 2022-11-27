@@ -8,5 +8,8 @@
 body, html{
   font-family: 'Titillium web', sans-serif;
   color: #7da1fa;
+  max-width: 100%;
+  display: block;
+  overflow-x: hidden;
   
 }

@@ -47,14 +47,13 @@ const Register = () => {
             createUser(data.email, data.password)
             .then(res => {
                const user = res.user; 
-                ;updateUser({displayName: data.name, photoURL: userPhoto}) 
+                updateUser({displayName: data.name, photoURL: userPhoto}) 
                 const newUser = {
                      name: data.name, 
                      email: data.email, 
                      photoURL: userPhoto, 
                      role: data.role,                   
                 }
-                console.log('newUsers', newUser); 
                   savedUser(newUser); 
             })
             .catch(err => {

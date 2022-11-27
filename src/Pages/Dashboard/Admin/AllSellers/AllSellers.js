@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import Loading from "../../../Shared/Loading/Loading";
 import { RiDeleteBin2Fill } from "react-icons/ri";
-import { MdDataUsage } from "react-icons/md";
 import toast from "react-hot-toast";
 const AllSellers = () => {
    const {
@@ -52,7 +51,14 @@ const AllSellers = () => {
    }
    console.log(sellers);
    return (
-      <div className="overflow-x-auto mx-auto">
+      <div className="w-full flex flex-col gap-5 items-center px-5">
+      <div className="flex items-center justify-center mb-5">
+            <h2 className="text-center  text-3xl md:text-4xl  font-bold inline-block text-secondary   border-b-2 border-secondary   pb-3 uppercase ">
+            All seller 
+            </h2>
+         </div>
+         <div className="w-full">
+         <div className="overflow-x-auto w-full">
          <table className="table table-compact table-zebra  w-full text-center ">
             <thead className="text-2xl font-semibold text-center text-primary bg-accent ">
                <tr>
@@ -64,7 +70,7 @@ const AllSellers = () => {
                   <th>Delete </th>
                </tr>
             </thead>
-            <tbody className="text-accent font-semibold  text-center ">
+            <tbody className="text-accent font-semibold  text-center">
                {sellers.map((seller, idx) => (
                   <tr className="text-center " key={seller._id}>
                      <td>{idx + 1}</td>
@@ -97,6 +103,9 @@ const AllSellers = () => {
             </tbody>
          </table>
       </div>
+         </div>
+      </div>
+      
    );
 };
 
