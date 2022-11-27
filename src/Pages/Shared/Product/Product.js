@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import {MdVerified} from 'react-icons/md'; 
 const Product = ({product}) => {
-   const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description} = product;  
+   const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description , isVerified } = product;  
    return (
       <div className='border-2 border-accent p-3 rounded-2xl  text-white bg-accent text-sm '>
          <div className='rounded-2xl'>
@@ -20,10 +20,14 @@ const Product = ({product}) => {
                      <button className='px-2 py-1 bg-secondary text-accent inline-block mr-2 rounded-xl font-semibold capitalize'>price: ${resellPrice}</button>
                      <button className='px-2 py-1 bg-secondary text-accent inline-block mr-2 rounded-xl font-semibold capitalize'>regular: ${originalPrice}</button> 
                </div>
-               <div className=''>
+               <div className='capitalize'>
                   <h1 className='text-2xl '>Seller Info</h1>
-                  <h3>Name: {sellerName}</h3>
-                  <p>email: {email}</p>
+                  <h3 className='text-base font-bold flex items-center justify-start gap-1'>Name: {sellerName} 
+                     {
+                        isVerified && <MdVerified className="text-[20px] text-green-500 "></MdVerified>
+                     }
+                  </h3>
+                  <p >email: <span className=' normal-case '>{email}</span></p>
                   <p>Phone: {phone}</p>
                   <p>Location: {location}</p>
                </div>           
