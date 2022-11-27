@@ -36,6 +36,12 @@ const DashboardLayout = () => {
                   >
                      My Orders
                   </Link>
+                  <Link
+                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                     to="/dashboard/sellers"
+                  >
+                     All sellers
+                  </Link>
                
             </div>
             <div className="flex grow w-full p-5 dashboardLayout">

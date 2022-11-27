@@ -12,6 +12,7 @@ import BookedProduct from "../../Pages/BookedProduct/BookedProduct"
 
 import MyOrders from "../../Pages/Dashboard/Buyer/MyOrders/MyOrders"
 import MyProduct from "../../Pages/Dashboard/Seller/MyProduct/MyProduct"
+import AllSellers from "../../Pages/Dashboard/Admin/AllSellers/AllSellers"
 
 
 const Routes = createBrowserRouter([
@@ -70,6 +71,10 @@ const Routes = createBrowserRouter([
          {
             path:"/dashboard/my-orders", 
             element: <MyOrders></MyOrders>
+         }, 
+         {
+            path:"/dashboard/sellers", 
+            element: <AllSellers></AllSellers>
          }
       ]
    }
