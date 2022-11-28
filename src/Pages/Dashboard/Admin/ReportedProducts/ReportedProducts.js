@@ -1,17 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
-import { data } from 'autoprefixer';
-import React from 'react';
+import React, { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { AiFillCloseCircle } from 'react-icons/ai';
-import { MdDragIndicator } from 'react-icons/md';
+import { AuthContext } from '../../../../Context/AuthProvider';
 import Loading from '../../../Shared/Loading/Loading';
 
 const ReportedProducts = () => {
-
+   const {logOut} = useContext(AuthContext); 
    const {data:products=[], isLoading, refetch} = useQuery({
       queryKey: ['products'], 
       queryFn: async() => {
-         const res =await  fetch(`http://localhost:5000/reported`); 
+         const res =await  fetch(`http://localhost:5000/reported`, {
+            headers: {
+               'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+            }
+         }); 
+
+         if(res.status === 403 || res.status === 401){ 
+            logOut(); 
+            return ; 
+         }
          const data = await res.json(); 
          return data; 
       }
@@ -25,8 +33,17 @@ const ReportedProducts = () => {
    const handleDelete  =(product) => {
       fetch(`http://localhost:5000/products/${product._id}`, {
          method: "delete",
+         headers: {
+            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+         }
       })
-      .then(res => res.json())
+      .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+         return res.json(); 
+      })
       .then(data => {
          if(data.deletedCount > 0){
             toast.success(`${product.productName} is deleted Successfully`); 

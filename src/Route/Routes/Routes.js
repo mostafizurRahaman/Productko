@@ -9,16 +9,16 @@ import Register from "../../Pages/Register/Register"
 import axios from 'axios'; 
 import PrivateRoute from "../PrivateRoute/PrivateRoute"
 import BookedProduct from "../../Pages/BookedProduct/BookedProduct"
-
 import MyOrders from "../../Pages/Dashboard/Buyer/MyOrders/MyOrders"
 import MyProduct from "../../Pages/Dashboard/Seller/MyProduct/MyProduct"
 import AllSellers from "../../Pages/Dashboard/Admin/AllSellers/AllSellers"
-import AllBuyer from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import AllBuyers from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import Payment from "../../Pages/Dashboard/Payment/Payment"
-import { async } from "@firebase/util"
-import { RiFileSearchFill } from "react-icons/ri"
 import ReportedProducts from "../../Pages/Dashboard/Admin/ReportedProducts/ReportedProducts"
+import AdminRoute from "../AdminRoute/AdminRoute"
+import BuyerRoute from "../BuyerRoute/BuyerRoute"
+import SellerRoute from "../SellerRoute/SellerRoute"
+import Blog from "../../Pages/Blog/Blog"
 
 
 const Routes = createBrowserRouter([
@@ -43,18 +43,30 @@ const Routes = createBrowserRouter([
             element: <Register></Register>
          }, 
          {
+            path: '/blog', 
+            element: <Blog></Blog>
+         }, 
+         {
             path: '/category/:id', 
-            element: <CategoryProducts></CategoryProducts>, 
+            element:<PrivateRoute> <BuyerRoute> <CategoryProducts></CategoryProducts></BuyerRoute></PrivateRoute>,
             loader: async({params}) =>{
-               const res = await  axios.get(`http://localhost:5000/categories/${params.id}`); 
+               const res = await  axios.get(`http://localhost:5000/categories/${params.id}`, {
+                  headers: {
+                     'authorization' : `bearer ${localStorage.getItem('productKoToken')}`
+                  }
+               }); 
                return res.data;
             }
          }, 
          {
             path: '/product/:id', 
-            element:  <BookedProduct></BookedProduct>, 
+            element:  <PrivateRoute><BuyerRoute><BookedProduct></BookedProduct></BuyerRoute></PrivateRoute>,
             loader: async({params}) => {
-               const res = await axios.get(`http://localhost:5000/products/${params.id}`);
+               const res = await axios.get(`http://localhost:5000/products/${params.id}`,{
+                  headers: {
+                     'authorization' : `bearer ${localStorage.getItem('productKoToken')}`
+                  }
+               });
                console.log(res); 
                return res.data; 
             }
@@ -68,38 +80,40 @@ const Routes = createBrowserRouter([
       children: [
          {
             path: '/dashboard/addProducts', 
-            element: <AddProducts></AddProducts>,
+            element: <SellerRoute><AddProducts></AddProducts></SellerRoute>,
          }, 
          {
             path:"/dashboard/myProducts", 
-            element: <MyProduct></MyProduct>
+            element: <SellerRoute><MyProduct></MyProduct></SellerRoute>
          },
          {
             path:"/dashboard/my-orders", 
-            element: <MyOrders></MyOrders>
+            element: <BuyerRoute><MyOrders></MyOrders></BuyerRoute>
          }, 
          {
             path:"/dashboard/sellers", 
-            element: <AllSellers></AllSellers>
+            element: <AdminRoute><AllSellers></AllSellers></AdminRoute>
          }, 
          {
             path: '/dashboard/buyers', 
-            element: <AllBuyers></AllBuyers>
+            element:<AdminRoute> <AllBuyers></AllBuyers></AdminRoute>
          }, 
          {
             path: '/dashboard/payment/:id', 
-            element: <Payment></Payment>, 
+            element: <BuyerRoute><Payment></Payment></BuyerRoute>, 
             loader: async({params}) => {
-               const res = await fetch(`http://localhost:5000/bookings/${params.id}`); 
-               console.log(res); 
+               const res = await fetch(`http://localhost:5000/bookings/${params.id}`, {
+                  headers: {                     
+                  "authorization" : `bearer ${localStorage.getItem('productKoToken')}`
+                  }
+               }); 
                const data  = await res.json(); 
-               console.log(data); 
                return data;
             }
          }, 
          {
             path: '/dashboard/reported', 
-            element: <ReportedProducts></ReportedProducts>, 
+            element:<AdminRoute> <ReportedProducts></ReportedProducts></AdminRoute>, 
          }
       ]
    }

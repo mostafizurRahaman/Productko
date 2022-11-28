@@ -1,9 +1,12 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../../Context/AuthProvider";
 import FormError from "../../Shared/Formsrror/FormError";
 
 const CheckOutFrom = ({ booking }) => {
    //create a state for handle payment card errors :
+
+   const {logOut} = useContext(AuthContext); 
    const [cardErrors, setCardErrors] = useState("");
    const [clientSecret, setClientSecret] = useState("");
    const [transaction , setTransaction] = useState(''); 
@@ -20,15 +23,23 @@ const CheckOutFrom = ({ booking }) => {
          method: "POST",
          headers: {
             "content-type": "application/json",
+            'authorization': `bearer ${localStorage.getItem('productKoToken')}`
          },
          body: JSON.stringify(booking),
       })
-         .then((res) => res.json())
-         .then((data) => {
+      .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+   
+         return res.json(); 
+        })
+      .then((data) => {
             setClientSecret(data.clientSecret);
          })
-         .catch((err) => console.log(err));
-   }, [booking]);
+      .catch((err) => console.log(err));
+   }, [booking, logOut]);
 
    // payment card handle function is here:
    const handleSubmit = async (event) => {
@@ -93,10 +104,18 @@ const CheckOutFrom = ({ booking }) => {
             method: "POST", 
             headers: {
               'content-type': "application/json", 
+              'authorization': `bearer ${localStorage.getItem('productKoToken')}`
             }, 
             body: JSON.stringify(payment)
           })
-          .then(res =>res.json())
+          .then(res => {
+            if(res.status === 403  || res.status===401){
+               logOut();
+               return; 
+            }
+      
+            return res.json(); 
+           }) 
           .then(data => {
             console.log(data); 
              if(data.acknowledged){

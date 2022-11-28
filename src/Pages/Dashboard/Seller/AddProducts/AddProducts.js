@@ -9,7 +9,7 @@ import FormError from "../../../Shared/Formsrror/FormError";
 import Loading from "../../../Shared/Loading/Loading";
 import './AddProducts.css' ; 
 const AddProducts = () => {
-   const {user} = useContext(AuthContext); 
+   const {user, logOut} = useContext(AuthContext); 
    const navigate = useNavigate(); 
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
@@ -73,7 +73,14 @@ const AddProducts = () => {
                      }, 
                      body: JSON.stringify(product)
                   })
-                  .then(res =>res.json())
+                  .then(res => {
+                     if(res.status === 403  || res.status===401){
+                        logOut();
+                        return; 
+                     }
+               
+                     return res.json(); 
+                    })
                   .then(data => {
                      if(data.acknowledged){
                         toast.success(`${product.productName} is added successfully`); 

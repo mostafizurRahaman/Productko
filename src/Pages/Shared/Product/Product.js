@@ -1,17 +1,29 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import {MdVerified} from 'react-icons/md'; 
 import {BsFlagFill}from 'react-icons/bs'; 
 import toast from 'react-hot-toast';
+import { AuthContext } from '../../../Context/AuthProvider';
 
 const Product = ({product}) => {
    const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description , isVerified , isReported} = product; 
+   const {logOut} = useContext(AuthContext);
    
    const handleReport = (product) => {
+
        fetch(`http://localhost:5000/products/reported/${_id}`, {
          method: 'put', 
+         headers: {
+            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+         }
        })
-       .then(res =>res.json())
+       .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+         return res.json(); 
+      })
        .then(data => {
             if(data.acknowledged){
                   toast.success(`${productName} is reported successfully.`); 

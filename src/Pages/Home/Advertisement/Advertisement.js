@@ -1,17 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../../Context/AuthProvider';
+import Loading from '../../Shared/Loading/Loading';
 import Product from '../../Shared/Product/Product';
 
 const Advertisement = () => {
+   const {logOut }  = useContext(AuthContext); 
       const {data:products=[], isLoading } = useQuery({
          queryKey: ["advertisements"], 
          queryFn: async() => {
-            const res = await fetch(`http://localhost:5000/advertised`); 
+            const res = await fetch(`http://localhost:5000/advertised`, {
+               headers: {
+                  'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+               }
+            }); 
+            if(res.status === 403  || res.status===401){
+               logOut();
+               return; 
+            }
             const data = await res.json(); 
             return data; 
          }
       })
-
+ 
+      if(isLoading){
+         return <Loading></Loading>
+      }
       
    return (
       <>

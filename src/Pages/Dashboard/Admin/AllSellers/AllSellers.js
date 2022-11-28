@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useContext, useState } from "react";
 import Loading from "../../../Shared/Loading/Loading";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
+import { AuthContext } from "../../../../Context/AuthProvider";
+
 const AllSellers = () => {
+   const {logOut} = useContext(AuthContext); 
    const {
       data: sellers = [],
       isLoading,
@@ -11,7 +14,15 @@ const AllSellers = () => {
    } = useQuery({
       queryKey: ["sellers"],
       queryFn: async () => {
-         const res = await fetch("http://localhost:5000/users?role=seller");
+         const res = await fetch("http://localhost:5000/users?role=seller", {
+            headers: {
+               'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+            }
+         });
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
          const data = await res.json();
          return data;
       },
@@ -21,11 +32,22 @@ const AllSellers = () => {
       return <Loading></Loading>;
    }
 
-   const handleVerify = (seller) => {
+   const handleVerify = (seller) => { 
+         console.log(seller)
       fetch(`http://localhost:5000/users/${seller.email}`, {
          method: "put",
+         headers: {
+            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+         }
       })
-         .then((res) => res.json())
+         .then((res) => {
+            if(res.status === 403  || res.status===401){
+               logOut();
+               return; 
+            }
+
+            return res.json(); 
+         })
          .then((data) => {
             console.log(data, "from verify")
             if (data.modifiedCount) {
@@ -37,10 +59,21 @@ const AllSellers = () => {
    };
 
    const handleDelete = (seller) => {
+      
      fetch(`http://localhost:5000/users/${seller._id}`, {
       method: "delete",
+      headers: {
+         'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+      }
      })
-     .then(res => res.json())
+     .then(res => {
+      if(res.status === 403  || res.status===401){
+         logOut();
+         return; 
+      }
+
+      return res.json(); 
+     })
      .then(data => {
          if(data.acknowledged){
             toast.success(`${seller.name} is successfully deleted`); 

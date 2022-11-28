@@ -6,6 +6,7 @@ import { AuthContext } from '../../Context/AuthProvider';
 import FormError from '../Shared/Formsrror/FormError';
 
 const BookedProduct = () => {
+   const {logOut} = useContext(AuthContext); 
    const product = useLoaderData(); 
    const navigate  = useNavigate(); 
    const {register, handleSubmit, formState:{errors} } = useForm(); 
@@ -33,12 +34,19 @@ const BookedProduct = () => {
        fetch(`http://localhost:5000/bookings`, {
          method: 'POST', 
          headers: {
-            'content-type': 'application/json', 
+            'content-type': 'application/json',             
+            "authorization" : `bearer ${localStorage.getItem('productKoToken')}`
 
          }, 
          body: JSON.stringify(bookedProduct)
        })
-       .then(res =>res.json())
+       .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+         return res.json(); 
+      })
        .then(data => {
          if(data.acknowledged){
             toast.success(`${productName} is Booked.`)

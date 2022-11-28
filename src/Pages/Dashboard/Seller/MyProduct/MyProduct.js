@@ -6,16 +6,26 @@ import {AiFillCloseCircle} from 'react-icons/ai';
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import Loading from "../../../Shared/Loading/Loading";
+import { BiLogOut } from "react-icons/bi";
 
 const MyProduct = () => {
-   const {user} = useContext(AuthContext);
+   const {user, logOut} = useContext(AuthContext);
 
   
   
    const {data:products=[], isLoading, refetch}  = useQuery({
       queryKey: ["products", user?.email],  
       queryFn: async() => {
-         const res  = await fetch(`http://localhost:5000/products?email=${user.email}`)
+         const res  = await fetch(`http://localhost:5000/products?email=${user.email}`, 
+         {
+            headers: {
+               'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+            }
+         })
+         if(res.status === 401 || res.status===403){
+            logOut(); 
+            return ; 
+         }
          const data = await res.json(); 
          return data; 
       }
@@ -30,10 +40,18 @@ const MyProduct = () => {
             method: "PUT", 
             headers: {
                'content-type': 'application/json',
+               'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
             }, 
             body: JSON.stringify({isAdvertised: true})
          })
-         .then(res => res.json())
+         .then(res => {
+            if(res.status === 403  || res.status===401){
+               logOut();
+               return; 
+            }
+      
+            return res.json(); 
+           })
          .then(data => {
              if(data.modifiedCount){
                   toast.success(`${product.productName} is added for advertised.`)
@@ -45,13 +63,23 @@ const MyProduct = () => {
 
    const handleDelete = (product) => {
       fetch(`http://localhost:5000/products/${product._id}`, {
-         method: "Delete"
+         method: "Delete",
+         headers: {
+            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+         }
       })
-      .then(res => res.json())
+      .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+   
+         return res.json(); 
+        })
       .then(data => {
          console.log(data);
          if(data.deletedCount > 0){
-               toast.success(`${product.name } is deleted  Successfully`); 
+               toast.success(`${product.productName} is deleted  Successfully`); 
                refetch(); 
          }
       })
@@ -97,7 +125,7 @@ const MyProduct = () => {
                            </td>
                            <td>{(product.isBooked || product.paymentStatus) || <button onClick={()=> handleDelete(product)}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}</td>
                           
-                           <td>{(product.isBooked || product.paymentStatus)|| <button onClick={()=> handleAdvertise(product)} className={`btn btn-sm   text-secondary   font-bold text-base ${  
+                           <td>{ product.paymentStatus|| <button onClick={()=> handleAdvertise(product)} className={`btn btn-sm   text-secondary   font-bold text-base ${  
                               product.isAdvertised ? "bg-red-500" : "bg-primary"
                            } `} disabled={product.isAdvertised}>
                               {

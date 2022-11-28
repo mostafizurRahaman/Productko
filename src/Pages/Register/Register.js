@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import toast, { LoaderIcon } from "react-hot-toast";
 import { AiOutlineGithub } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImGoogle3 } from "react-icons/im";
@@ -11,6 +11,7 @@ import { AuthContext } from "../../Context/AuthProvider";
 import useToken from "../../hooks/useToken";
 
 import FormError from "../Shared/Formsrror/FormError";
+import Loading from "../Shared/Loading/Loading";
 import "./Register.css";
 const Register = () => {
    const [createdEmail, setCreatedEmail ] = useState(''); 
@@ -19,14 +20,18 @@ const Register = () => {
    const { register, handleSubmit, formState: {errors} } = useForm();
    const [generalErrors , setGeneralErrors] = useState(''); 
    const navigate = useNavigate(); 
+   const [loading, setLoading]  = useState(''); 
    const imageHostKey = process.env.REACT_APP_Image_BB_KEY;    
 
    if(token){
       navigate('/'); 
    } 
-
+   if(loading){
+      return <Loading></Loading>;
+   }
 
    const handleRegister = (data) => {
+      setLoading(true); 
        setGeneralErrors('');
       if(data.password !== data.confirm){
          setGeneralErrors('password & confirm password not matched'); 
@@ -64,7 +69,10 @@ const Register = () => {
       })
       .catch(err => {
          setGeneralErrors(err.message); 
-      });
+      })
+      .finally(()=>{
+         setLoading(false);
+      }); ;
    }
 
 
@@ -76,6 +84,7 @@ const Register = () => {
 
 
    const handleGoogleLogin  = () => {
+      setLoading(true); 
       setGeneralErrors(''); 
       GoogleSignIn()
       .then(res => {
@@ -88,7 +97,10 @@ const Register = () => {
          }
          savedUser(newUser); 
       })
-      .catch(err => console.log(err)); 
+      .catch(err => console.log(err))
+      .finally(()=>{
+         setLoading(false);
+      }); 
    }
 
    const savedUser = (user) => {
@@ -104,6 +116,7 @@ const Register = () => {
          if(data.acknowledged || data.alreadyAdded){
             setCreatedEmail(user.email); 
             toast.success(`Congratulations ${user.name}, your account created Successfully`); 
+            setLoading(false); 
          }
       })
       .catch(err => console.log(err)); 

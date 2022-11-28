@@ -2,18 +2,27 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
+import { BiLogOut } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import Loading from "../../../Shared/Loading/Loading";
 
 const MyOrders = () => {
-   const { user } = useContext(AuthContext);
+   const { user, logOut } = useContext(AuthContext);
    const { data: orders = [], isLoading, refetch } = useQuery({
       queryKey: ["orders", user?.email],
       queryFn: async () => {
          const res = await fetch(
-            `http://localhost:5000/bookings?email=${user?.email}`
+            `http://localhost:5000/bookings?email=${user?.email}`, {
+               headers: {
+                  'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
+               }
+            }
          );
+         if(res.status === 401 || res.status=== 403){
+            logOut();  
+            return ; 
+         }
          const data = await res.json();
          return data;
       },
@@ -29,10 +38,18 @@ const MyOrders = () => {
          method: "delete", 
          headers: {
             'content-type': 'application/json', 
+            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
          }, 
          body: JSON.stringify(order) 
       })
-      .then(res =>res.json())
+      .then(res => {
+         if(res.status === 403  || res.status===401){
+            logOut();
+            return; 
+         }
+   
+         return res.json(); 
+        }) 
       .then(data => {
          if(data.deletedCount > 0){
             toast.success(`${order.productName} is deleted successfully`); 

@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import Navbar from "../../Pages/Shared/Navbar/Navbar";
 import { BiShow, BiHide } from "react-icons/bi";
-import './DashboardLayout.css'; 
+import "./DashboardLayout.css";
+import useIsAdmin from "../../hooks/useIsAdmin";
+import { AuthContext } from "../../Context/AuthProvider";
+import useIsBuyer from "../../hooks/useIsBuyer";
+import useIsSeller from "../../hooks/useIsSeller";
+import Loading from "../../Pages/Shared/Loading/Loading";
 
 const DashboardLayout = () => {
    const [sideMenu, setSideMenu] = useState(false);
+   const { user, loading } = useContext(AuthContext);
+   const { isAdmin } = useIsAdmin(user?.email);
+   const { isBuyer} = useIsBuyer(user?.email);
+   const { isSeller} = useIsSeller(user?.email);
+
+   if(loading){
+      return <Loading></Loading>
+   }
    return (
       <div className="relative">
          <Navbar></Navbar>
@@ -17,44 +30,54 @@ const DashboardLayout = () => {
                      : "left-[-999px] "
                }`}
             >
+               {isSeller && (
+                  <>
+                     <Link
+                        className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                        to="/dashboard/addProducts"
+                     >
+                        ADD Product
+                     </Link>
+                     <Link
+                        className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                        to="/dashboard/myProducts"
+                     >
+                        My products
+                     </Link>
+                  </>
+               )}
 
-                  <Link
-                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
-                     to="/dashboard/addProducts"
-                  >
-                     ADD Product
-                  </Link>            
-                  <Link
-                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
-                     to="/dashboard/myProducts"
-                  >
-                     My products
-                  </Link>
+               {isBuyer && (
                   <Link
                      className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
                      to="/dashboard/my-orders"
                   >
                      My Orders
                   </Link>
-                  <Link
-                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
-                     to="/dashboard/sellers"
-                  >
-                     All sellers
-                  </Link>
-                  <Link
-                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
-                     to="/dashboard/buyers"
-                  >
-                     All Buyers 
-                  </Link>
-                  <Link
-                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
-                     to="/dashboard/reported"
-                  >
-                     Reported Items
-                  </Link>
-               
+               )}
+
+               {isAdmin && (
+                  <>
+                     <Link
+                        className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                        to="/dashboard/sellers"
+                     >
+                        All sellers
+                     </Link>
+                     <Link
+                        className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                        to="/dashboard/buyers"
+                     >
+                        All Buyers
+                     </Link>
+                     <Link
+                        className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                        to="/dashboard/reported"
+                     >
+                        Reported Items
+                     </Link>
+                  </>
+               )}
             </div>
             <div className="flex grow w-full p-5 dashboardLayout min-h-screen">
                <Outlet></Outlet>

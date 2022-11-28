@@ -9,6 +9,7 @@ import FormError from '../Shared/Formsrror/FormError';
 import { AuthContext } from '../../Context/AuthProvider';
 import useToken from '../../hooks/useToken'; 
 import toast from 'react-hot-toast';
+import Loading from '../Shared/Loading/Loading';
 
 const Login = () => {
    const {register, handleSubmit, formState:{errors}} = useForm(); 
@@ -19,26 +20,33 @@ const Login = () => {
    const location = useLocation(); 
    const from = location.state?.from?.pathname || '/'; 
    const {token} = useToken(loginEmail);
+   const [loading, setLoading] = useState(false); 
    
    if(token){
       navigate(from , {replace: true}); 
    }
 
+   if(loading){
+      return <Loading></Loading>
+   }
    const handleLogin = (data) => {
+      setLoading(true);
          setGeneralError('');
          LogIn(data.email, data.password)
          .then(res =>{
             const user = res.user; 
             setLoginEmail(user.email); 
             console.log(user); 
+            setLoading(false);
          })
          .catch(err =>{
             setGeneralError(err.message); 
-         }); 
+         })
    }
 
 
    const handleGoogleLogin  = () => {
+      setLoading(true); 
       setGeneralError(''); 
       GoogleSignIn()
       .then(res => {
@@ -51,7 +59,10 @@ const Login = () => {
          }
          savedUser(newUser); 
       })
-      .catch(err => console.log(err)); 
+      .catch(err => console.log(err))
+      .finally(()=>{
+         setLoading(false);
+      }); 
    }
 
 
@@ -66,7 +77,8 @@ const Login = () => {
       .then(res =>res.json())
       .then(data => {
          if(data.acknowledged || data.alreadyAdded){
-            setLoginEmail(user.email); 
+            setLoginEmail(user.email);             
+            setLoading(false);
             toast.success(`Congratulations ${user.name}, your account created Successfully`); 
          }
       })

@@ -30,7 +30,7 @@ const Navbar = () => {
             ? 
 
             <>
-                <Link   onClick={()=>setShow(!show)} to='/dashboard'>Blog</Link>
+                <Link   onClick={()=>setShow(!show)} to='/blog'>Blog</Link>
                <button onClick={()=>{
                   setShow(!show)
                   handleLogOut(); 
