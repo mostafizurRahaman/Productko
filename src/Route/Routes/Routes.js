@@ -17,6 +17,7 @@ import AllBuyer from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import AllBuyers from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import Payment from "../../Pages/Dashboard/Payment/Payment"
 import { async } from "@firebase/util"
+import { RiFileSearchFill } from "react-icons/ri"
 
 
 const Routes = createBrowserRouter([
@@ -88,7 +89,11 @@ const Routes = createBrowserRouter([
             path: '/dashboard/payment/:id', 
             element: <Payment></Payment>, 
             loader: async({params}) => {
-               const res = await fetch(``)
+               const res = await fetch(`http://localhost:5000/bookings/${params.id}`); 
+               console.log(res); 
+               const data  = await res.json(); 
+               console.log(data); 
+               return data;
             }
          }
       ]
