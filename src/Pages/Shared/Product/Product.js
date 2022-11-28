@@ -1,8 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {MdVerified} from 'react-icons/md'; 
+import {BsFlagFill}from 'react-icons/bs'; 
+import toast from 'react-hot-toast';
+
 const Product = ({product}) => {
-   const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description , isVerified } = product;  
+   const {_id, condition, email,image,location,originalPrice,phone,postDate,postTime,productName,resellPrice,sellerName,yearsOfUse,description , isVerified , isReported} = product; 
+   
+   const handleReport = (product) => {
+       fetch(`http://localhost:5000/products/reported/${_id}`, {
+         method: 'put', 
+       })
+       .then(res =>res.json())
+       .then(data => {
+            if(data.acknowledged){
+                  toast.success(`${productName} is deleted successfully.`); 
+                  window.location.reload()
+            }
+       })
+       .catch(err =>console.log(err)); 
+   }
    return (
       <div className='border-2 border-accent p-3 rounded-2xl  text-white bg-accent text-sm '>
          <div className='rounded-2xl'>
@@ -11,7 +28,14 @@ const Product = ({product}) => {
          <div className='flex  flex-col flex-grow gap-4'>
              <div className='flex flex-col gap-2'>
                <div className='capitalize space-y-1 '>
-                     <h3 className='text-2xl  mt-3'>{productName}</h3>
+                    <div className='flex justify-between items-center mt-3'>
+                        <h3 className='text-2xl'>{productName}</h3>
+                        <div className='flex items-center justify-center gap-3  text-base'>
+                           <BsFlagFill  onClick={()=>handleReport(product)} className={`cursor-pointer text-xl ${isReported && "text-red-500"}`}></BsFlagFill>
+                           <p>{isReported ? "reported" : "report"}</p>
+                        </div>
+                    </div>
+                     
                      <div className='flex gap-1'>
                         <p> use : {yearsOfUse} /  </p>
                         <p>quality: {condition}</p>
