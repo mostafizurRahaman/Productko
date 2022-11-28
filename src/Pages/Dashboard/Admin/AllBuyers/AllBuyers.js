@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
-import toast  from "react-hot-toast";
+import toast from "react-hot-toast";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import Loading from "../../../Shared/Loading/Loading";
 
 const AllBuyers = () => {
-   const {logOut } = useContext(AuthContext); 
-   
+   const { logOut } = useContext(AuthContext);
+
    const {
       data: buyers = [],
       isLoading,
@@ -15,17 +15,19 @@ const AllBuyers = () => {
    } = useQuery({
       queryKey: ["buyers"],
       queryFn: async () => {
-         const res = await fetch("http://localhost:5000/users?role=buyer", {
-            headers: {
-               authorization: `bearer ${localStorage.getItem(
-                  "productKoToken"
-               )}`,
-            },
-
-         });
-         if(res.status === 403  || res.status===401){
+         const res = await fetch(
+            "https://productko-server.vercel.app/users?role=buyer",
+            {
+               headers: {
+                  authorization: `bearer ${localStorage.getItem(
+                     "productKoToken"
+                  )}`,
+               },
+            }
+         );
+         if (res.status === 403 || res.status === 401) {
             logOut();
-            return; 
+            return;
          }
          const data = await res.json();
          return data;
@@ -37,19 +39,19 @@ const AllBuyers = () => {
    }
 
    const handleDelete = (buyer) => {
-      fetch(`http://localhost:5000/users/${buyer._id}`, {
+      fetch(`https://productko-server.vercel.app/users/${buyer._id}`, {
          method: "delete",
          headers: {
             authorization: `bearer ${localStorage.getItem("productKoToken")}`,
          },
       })
          .then((res) => {
-            if(res.status === 403  || res.status===401){
+            if (res.status === 403 || res.status === 401) {
                logOut();
-               return; 
+               return;
             }
 
-            return res.json(); 
+            return res.json();
          })
          .then((data) => {
             if (data.deletedCount > 0) {

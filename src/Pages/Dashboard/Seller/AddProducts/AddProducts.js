@@ -1,100 +1,105 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { RiImageAddFill } from "react-icons/ri";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import FormError from "../../../Shared/Formsrror/FormError";
 import Loading from "../../../Shared/Loading/Loading";
-import './AddProducts.css' ; 
+import "./AddProducts.css";
 const AddProducts = () => {
-   const {user, logOut} = useContext(AuthContext); 
-   const navigate = useNavigate(); 
+   const { user, logOut } = useContext(AuthContext);
+   const navigate = useNavigate();
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
-         const res = await fetch("http://localhost:5000/categories");
+         const res = await fetch(
+            "https://productko-server.vercel.app/categories"
+         );
          const data = await res.json();
          return data;
       },
    });
 
-
    
+
    const {
       register,
-      handleSubmit,  
+      handleSubmit,
       formState: { errors },
    } = useForm();
-   if(!user){
-      return <Loading></Loading>
+   if (!user) {
+      return <Loading></Loading>;
    }
-
+   
 
    const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
+  
    const handleAddProduct = (data) => {
-         const image = data.image[0]; 
-         const formData = new FormData(); 
-         formData.append('image', image); 
-         fetch(`https://api.imgbb.com/1/upload?key=${imageHostKey}`, {
-            method: "POST", 
-            body: formData
-         })
-         .then(res => res.json())
-         .then(imageData => {
-              if(imageData.success){
-                  const img = imageData.data.url; 
-                  const date = new Date(); 
-                  const currentTime = date.toLocaleTimeString(); 
-                  const currentDate = date.toLocaleDateString(); 
-                  const product = {
-                     sellerName: data.sellerName, 
-                     email: data.email, 
-                     phone: data.phone, 
-                     productName: data.productName, 
-                     originalPrice: parseFloat(data.originalPrice), 
-                     resellPrice: parseFloat(data.resellPrice), 
-                     image : img, 
-                     location: data.sellerLocation,  
-                     postDate: currentDate, 
-                     postTime: currentTime, 
-                     category : data.category, 
-                     condition: data.condition, 
-                     yearsOfUse: data.yearsOfUse, 
-                     description: data.description,
-                  }
-                  console.log(product); 
-                  fetch(`http://localhost:5000/products`, {
-                     method: 'POST', 
-                     headers: { 
-                        'content-type': 'application/json', 
-                        authorization: `bearer ${localStorage.getItem('productKoToken')}`
-                     }, 
-                     body: JSON.stringify(product)
-                  })
-                  .then(res => {
-                     if(res.status === 403  || res.status===401){
+      const image = data.image[0];
+      const formData = new FormData();
+      formData.append("image", image);
+      fetch(`https://api.imgbb.com/1/upload?key=${imageHostKey}`, {
+         method: "POST",
+         body: formData,
+      })
+         .then((res) => res.json())
+         .then((imageData) => {
+            if (imageData.success) {
+               const img = imageData.data.url;
+               const date = new Date();
+               const currentTime = date.toLocaleTimeString();
+               const currentDate = date.toLocaleDateString();
+               const product = {
+                  sellerName: data.sellerName,
+                  email: data.email,
+                  phone: data.phone,
+                  productName: data.productName,
+                  originalPrice: parseFloat(data.originalPrice),
+                  resellPrice: parseFloat(data.resellPrice),
+                  image: img,
+                  location: data.sellerLocation,
+                  postDate: currentDate,
+                  postTime: currentTime,
+                  category: data.category,
+                  condition: data.condition,
+                  yearsOfUse: data.yearsOfUse,
+                  description: data.description,
+               };
+               console.log(product);
+               fetch(`https://productko-server.vercel.app/products`, {
+                  method: "POST",
+                  headers: {
+                     "content-type": "application/json",
+                     authorization: `bearer ${localStorage.getItem(
+                        "productKoToken"
+                     )}`,
+                  },
+                  body: JSON.stringify(product),
+               })
+                  .then((res) => {
+                     if (res.status === 403 || res.status === 401) {
                         logOut();
-                        return; 
+                        return;
                      }
-               
-                     return res.json(); 
-                    })
-                  .then(data => {
-                     if(data.acknowledged){
-                        toast.success(`${product.productName} is added successfully`); 
-                        navigate('/dashboard/myProducts')
+
+                     return res.json();
+                  })
+                  .then((data) => {
+                     if (data.acknowledged) {
+                        toast.success(
+                           `${product.productName} is added successfully`
+                        );
+                        navigate("/dashboard/myProducts");
                      }
                   })
-                  .catch(err => console.log(err)); 
-              }
+                  .catch((err) => console.log(err));
+            }
          })
-         .catch(err => console.log(err)); 
+         .catch((err) => console.log(err));
    };
 
-
-  
    return (
       <div className="addProduct w-full">
          <div className=" my-5 flex items-center justify-center">
@@ -103,11 +108,16 @@ const AddProducts = () => {
                className="bg-neutral w-11/12 md:w-4/5 p-5 rounded-2xl"
             >
                <h2 className="text-4xl mb-3 font-bold text-center capitalize text-secondary ">
-                  Add Your product 
+                  Add Your product
                </h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-secondary ">
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="sellerName">Seller Name :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="sellerName"
+                     >
+                        Seller Name :
+                     </label>
                      <input
                         type="text"
                         placeholder="Name"
@@ -119,12 +129,16 @@ const AddProducts = () => {
                      />
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="product-name">Product Name :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="product-name"
+                     >
+                        Product Name :
+                     </label>
                      <input
                         type="text"
                         placeholder="product name"
                         className="input w-full border-2 border-neutral text-accent"
-                        
                         id="product-name"
                         {...register("productName", {
                            required: "must enter product name",
@@ -135,7 +149,12 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="email">Email :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="email"
+                     >
+                        Email :
+                     </label>
                      <input
                         type="email"
                         placeholder="email"
@@ -145,12 +164,17 @@ const AddProducts = () => {
                         id="seller-email"
                         {...register("email")}
                      />
-                     {
-                        errors.email && <FormError>{errors.email.message}</FormError>
-                     }
+                     {errors.email && (
+                        <FormError>{errors.email.message}</FormError>
+                     )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="phone">phone :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="phone"
+                     >
+                        phone :
+                     </label>
                      <input
                         type="text"
                         placeholder="phone number"
@@ -169,7 +193,12 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="original-price">Original price :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="original-price"
+                     >
+                        Original price :
+                     </label>
                      <input
                         type="text"
                         placeholder="original-price"
@@ -188,7 +217,12 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="resellPrice">reselling price :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="resellPrice"
+                     >
+                        reselling price :
+                     </label>
                      <input
                         type="text"
                         placeholder="resellPrice"
@@ -207,7 +241,12 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="yearsOfUse">Years of Use : </label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="yearsOfUse"
+                     >
+                        Years of Use :{" "}
+                     </label>
                      <input
                         type="text"
                         placeholder="years of use"
@@ -222,7 +261,12 @@ const AddProducts = () => {
                      )}
                   </div>
                   <div>
-                     <label className="capitalize text-xl font-semibold" htmlFor="location">location :</label>
+                     <label
+                        className="capitalize text-xl font-semibold"
+                        htmlFor="location"
+                     >
+                        location :
+                     </label>
                      <input
                         type="text"
                         placeholder="location"
@@ -232,13 +276,18 @@ const AddProducts = () => {
                            required: "enter a location",
                         })}
                      />
-                     {
-                        errors.sellerLocation && <FormError>{errors.sellerLocation.message}</FormError>
-                     }
+                     {errors.sellerLocation && (
+                        <FormError>{errors.sellerLocation.message}</FormError>
+                     )}
                   </div>
 
                   <div className="">
-                     <label className="capitalize font-semibold text-xl" htmlFor="product-category">category:</label>
+                     <label
+                        className="capitalize font-semibold text-xl"
+                        htmlFor="product-category"
+                     >
+                        category:
+                     </label>
                      <div>
                         <select
                            name="category"
@@ -259,85 +308,113 @@ const AddProducts = () => {
                         )}
                      </div>
                      <div>
-                        <label className="capitalize text-xl font-semibold my-2 block" htmlFor="condition">Condition :</label>
+                        <label
+                           className="capitalize text-xl font-semibold my-2 block"
+                           htmlFor="condition"
+                        >
+                           Condition :
+                        </label>
                         <div className="flex  gap-3 capitalize">
-                        <label htmlFor="excellent">
-                        <input
-                           type="radio"
-                           name="condition"
-                           value="excellent"
-                           id="excellent"
-                           className="mr-1"
-                           {...register("condition", {
-                              required: "must select an condition",
-                           })}
-                        />
-                        excellent
-                     </label>
-                     <label htmlFor="good">
-                        <input
-                           type="radio"
-                           name="condition"
-                           id="good"
-                           value="good"
-                           className="mr-1"
-                           {...register("condition", {
-                              required: "must select an condition",
-                           })}
-                        />
-                        good
-                     </label>
-                     <label htmlFor="fair">
-                        <input
-                           type="radio"
-                           name="condition"
-                           value="fair"
-                           id="fair"
-                           className="mr-1"
-                           {...register("condition", {
-                              required: "must select an condition",
-                           })}
-                        />
-                        fair
-                     </label>
+                           <label htmlFor="excellent">
+                              <input
+                                 type="radio"
+                                 name="condition"
+                                 value="excellent"
+                                 id="excellent"
+                                 className="mr-1"
+                                 {...register("condition", {
+                                    required: "must select an condition",
+                                 })}
+                              />
+                              excellent
+                           </label>
+                           <label htmlFor="good">
+                              <input
+                                 type="radio"
+                                 name="condition"
+                                 id="good"
+                                 value="good"
+                                 className="mr-1"
+                                 {...register("condition", {
+                                    required: "must select an condition",
+                                 })}
+                              />
+                              good
+                           </label>
+                           <label htmlFor="fair">
+                              <input
+                                 type="radio"
+                                 name="condition"
+                                 value="fair"
+                                 id="fair"
+                                 className="mr-1"
+                                 {...register("condition", {
+                                    required: "must select an condition",
+                                 })}
+                              />
+                              fair
+                           </label>
                         </div>
-                     {errors.condition && (
-                        <FormError>{errors.condition.message}</FormError>
-                     )}
-                   </div>
+                        {errors.condition && (
+                           <FormError>{errors.condition.message}</FormError>
+                        )}
+                     </div>
                   </div>
                   <div className="w-full flex flex-col gap-1">
-                     <label htmlFor="image" className="text-xl capitalize font-semibold ">Upload Image:</label>
-                     <label htmlFor="image" className="flex items-center gap-4 px-2 py-4 w-full 
-                       border-2 border-dashed">
-                     <RiImageAddFill className="w-16  h-16 text-primary"></RiImageAddFill>
-                     <input
-                     type="file"
-                     id="image"
-                     placeholder="image"
-                     className="placeholder:text-accent text-base"
-                     {
-                        ...register('image', {required: "must upload an image"})
-                       }
-                  />
-                  </label>
-                  {
-                     errors.image && <FormError>{errors.image.message}</FormError>
-                  }
-                  
+                     <label
+                        htmlFor="image"
+                        className="text-xl capitalize font-semibold "
+                     >
+                        Upload Image:
+                     </label>
+                     <label
+                        htmlFor="image"
+                        className="flex items-center gap-4 px-2 py-4 w-full 
+                       border-2 border-dashed"
+                     >
+                        <RiImageAddFill className="w-16  h-16 text-primary"></RiImageAddFill>
+                        <input
+                           type="file"
+                           id="image"
+                           placeholder="image"
+                           className="placeholder:text-accent text-base"
+                           {...register("image", {
+                              required: "must upload an image",
+                           })}
+                        />
+                     </label>
+                     {errors.image && (
+                        <FormError>{errors.image.message}</FormError>
+                     )}
+                  </div>
                </div>
-                  
-               </div>
-             
+
                <div className="flex gap-2 flex-col mt-3">
-                  <label htmlFor="message" className="text-white font-semibold capitalize text-xl " >message :</label>
-                    <textarea name="message" id="message" cols="30" rows="5" className="rounded-lg text-accent p-3" placeholder="Message"
-                     {...register("description", {required:"must enter a description", minLength:{value: 30 , message: 'description must be 30 character'}} )}
-                    ></textarea> 
-                    {
-                     errors.description && <FormError>{errors.description.message}</FormError>
-                    }
-                </div>
+                  <label
+                     htmlFor="message"
+                     className="text-white font-semibold capitalize text-xl "
+                  >
+                     message :
+                  </label>
+                  <textarea
+                     name="message"
+                     id="message"
+                     cols="30"
+                     rows="5"
+                     className="rounded-lg text-accent p-3"
+                     placeholder="Message"
+                     {...register("description", {
+                        required: "must enter a description",
+                        minLength: {
+                           value: 30,
+                           message: "description must be 30 character",
+                        },
+                     })}
+                  ></textarea>
+                  {errors.description && (
+                     <FormError>{errors.description.message}</FormError>
+                  )}
+               </div>
                <div className="flex items-center justify-center  mt-4">
                   <button
                      type="submit"

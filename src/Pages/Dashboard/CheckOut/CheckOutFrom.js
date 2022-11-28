@@ -6,12 +6,12 @@ import FormError from "../../Shared/Formsrror/FormError";
 const CheckOutFrom = ({ booking }) => {
    //create a state for handle payment card errors :
 
-   const {logOut} = useContext(AuthContext); 
+   const { logOut } = useContext(AuthContext);
    const [cardErrors, setCardErrors] = useState("");
    const [clientSecret, setClientSecret] = useState("");
-   const [transaction , setTransaction] = useState(''); 
-   const [success , setSuccess ] = useState(''); 
-   const [processing ,setProcessing] = useState(''); 
+   const [transaction, setTransaction] = useState("");
+   const [success, setSuccess] = useState("");
+   const [processing, setProcessing] = useState("");
 
    //create element and stripe :
    const stripe = useStripe();
@@ -19,26 +19,26 @@ const CheckOutFrom = ({ booking }) => {
 
    //useEffect :
    useEffect(() => {
-      fetch(`http://localhost:5000/create-payment-intent`, {
+      fetch(`https://productko-server.vercel.app/create-payment-intent`, {
          method: "POST",
          headers: {
             "content-type": "application/json",
-            'authorization': `bearer ${localStorage.getItem('productKoToken')}`
+            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
          },
          body: JSON.stringify(booking),
       })
-      .then(res => {
-         if(res.status === 403  || res.status===401){
-            logOut();
-            return; 
-         }
-   
-         return res.json(); 
-        })
-      .then((data) => {
+         .then((res) => {
+            if (res.status === 403 || res.status === 401) {
+               logOut();
+               return;
+            }
+
+            return res.json();
+         })
+         .then((data) => {
             setClientSecret(data.clientSecret);
          })
-      .catch((err) => console.log(err));
+         .catch((err) => console.log(err));
    }, [booking, logOut]);
 
    // payment card handle function is here:
@@ -70,69 +70,69 @@ const CheckOutFrom = ({ booking }) => {
       } else {
          setCardErrors("");
       }
-      setSuccess(''); 
-      setTransaction(''); 
-      setProcessing(true); 
-      const {paymentIntent, error:confirmError} = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: card,
-            billing_details: {
-              name: booking.buyerName,
-              email:booking.email, 
+      setSuccess("");
+      setTransaction("");
+      setProcessing(true);
+      const { paymentIntent, error: confirmError } =
+         await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+               card: card,
+               billing_details: {
+                  name: booking.buyerName,
+                  email: booking.email,
+               },
             },
-          },
-        },
-      );
+         });
 
-      if(confirmError){
-        setCardErrors(confirmError.message); 
-        return ; 
+      if (confirmError) {
+         setCardErrors(confirmError.message);
+         return;
       }
-      if(paymentIntent.status === "succeeded"){
-          const payment = {
-            productName: booking.productName, 
-            buyerName: booking.buyerName, 
-            email: booking.email, 
-            transactionId: transaction, 
-            product_id: booking.product_id, 
+      if (paymentIntent.status === "succeeded") {
+         const payment = {
+            productName: booking.productName,
+            buyerName: booking.buyerName,
+            email: booking.email,
+            transactionId: transaction,
+            product_id: booking.product_id,
             bookingId: booking._id,
-            paymentStatus: true
-          }
-          fetch(`http://localhost:5000/payments/`, {
-            method: "POST", 
+            paymentStatus: true,
+         };
+         fetch(`https://productko-server.vercel.app/payments/`, {
+            method: "POST",
             headers: {
-              'content-type': "application/json", 
-              'authorization': `bearer ${localStorage.getItem('productKoToken')}`
-            }, 
-            body: JSON.stringify(payment)
-          })
-          .then(res => {
-            if(res.status === 403  || res.status===401){
-               logOut();
-               return; 
-            }
-      
-            return res.json(); 
-           }) 
-          .then(data => {
-            console.log(data); 
-             if(data.acknowledged){
-                setSuccess(`Congratulations, payment is succeeded for ${booking.productName} `);
-                setTransaction(paymentIntent.id); 
-             }
-          })
-          .catch(err => console.log(err));
+               "content-type": "application/json",
+               authorization: `bearer ${localStorage.getItem(
+                  "productKoToken"
+               )}`,
+            },
+            body: JSON.stringify(payment),
+         })
+            .then((res) => {
+               if (res.status === 403 || res.status === 401) {
+                  logOut();
+                  return;
+               }
+
+               return res.json();
+            })
+            .then((data) => {
+               console.log(data);
+               if (data.acknowledged) {
+                  setSuccess(
+                     `Congratulations, payment is succeeded for ${booking.productName} `
+                  );
+                  setTransaction(paymentIntent.id);
+               }
+            })
+            .catch((err) => console.log(err));
       }
 
-      setProcessing(false); 
-
+      setProcessing(false);
    };
 
    return (
       <form onSubmit={handleSubmit}>
-        
          <CardElement
             options={{
                style: {
@@ -157,12 +157,14 @@ const CheckOutFrom = ({ booking }) => {
             Pay
          </button>
          {cardErrors && <FormError>{cardErrors}</FormError>}
-         {
-          success && <div className="text-green-500">
-              <h3 className="text-sm font-bold capitalize ">{success}</h3>
-              <p className="text-sm font-bold capitalize">transaction : {transaction}</p>
-          </div>
-         }
+         {success && (
+            <div className="text-green-500">
+               <h3 className="text-sm font-bold capitalize ">{success}</h3>
+               <p className="text-sm font-bold capitalize">
+                  transaction : {transaction}
+               </p>
+            </div>
+         )}
       </form>
    );
 };

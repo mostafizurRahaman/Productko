@@ -7,7 +7,7 @@ const useIsBuyer = (email) => {
    const [buyerLoading, setBuyerLoading] = useState(true);
    useEffect(() => {
       if (email) {
-         fetch(`http://localhost:5000/users/buyer/${email}`, {
+         fetch(`https://productko-server.vercel.app/users/buyer/${email}`, {
             headers: {
                authorization: `Bearer ${localStorage.getItem(
                   "productKoToken"

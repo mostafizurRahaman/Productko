@@ -9,55 +9,62 @@ import Loading from "../../../Shared/Loading/Loading";
 
 const MyOrders = () => {
    const { user, logOut } = useContext(AuthContext);
-   const { data: orders = [], isLoading, refetch } = useQuery({
+   const {
+      data: orders = [],
+      isLoading,
+      refetch,
+   } = useQuery({
       queryKey: ["orders", user?.email],
       queryFn: async () => {
          const res = await fetch(
-            `http://localhost:5000/bookings?email=${user?.email}`, {
+            `https://productko-server.vercel.app/bookings?email=${user?.email}`,
+            {
                headers: {
-                  'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
-               }
+                  authorization: `bearer ${localStorage.getItem(
+                     "productKoToken"
+                  )}`,
+               },
             }
          );
-         if(res.status === 401 || res.status=== 403){
-            logOut();  
-            return ; 
+         if (res.status === 401 || res.status === 403) {
+            logOut();
+            return;
          }
          const data = await res.json();
          return data;
       },
    });
 
-   if(isLoading){
-      return <Loading></Loading>
+   if (isLoading) {
+      return <Loading></Loading>;
    }
 
-   const handleDelete = (order) =>{
+   const handleDelete = (order) => {
       console.log(order);
-      fetch(`http://localhost:5000/bookings/${order._id}`, {
-         method: "delete", 
+      fetch(`https://productko-server.vercel.app/bookings/${order._id}`, {
+         method: "delete",
          headers: {
-            'content-type': 'application/json', 
-            'authorization' : `bearer ${localStorage.getItem("productKoToken")}`
-         }, 
-         body: JSON.stringify(order) 
+            "content-type": "application/json",
+            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
+         },
+         body: JSON.stringify(order),
       })
-      .then(res => {
-         if(res.status === 403  || res.status===401){
-            logOut();
-            return; 
-         }
-   
-         return res.json(); 
-        }) 
-      .then(data => {
-         if(data.deletedCount > 0){
-            toast.success(`${order.productName} is deleted successfully`); 
-            refetch(); 
-         }
-      })
-      .catch(err =>console.log(err)); 
-   }
+         .then((res) => {
+            if (res.status === 403 || res.status === 401) {
+               logOut();
+               return;
+            }
+
+            return res.json();
+         })
+         .then((data) => {
+            if (data.deletedCount > 0) {
+               toast.success(`${order.productName} is deleted successfully`);
+               refetch();
+            }
+         })
+         .catch((err) => console.log(err));
+   };
    console.log(orders);
    return (
       <div className="w-full">
@@ -81,21 +88,41 @@ const MyOrders = () => {
                      </tr>
                   </thead>
                   <tbody className="text-accent font-semibold  text-center ">
-                     {
-                        orders.map( (order , idx) => <tr className="text-center " key={order._id}>
+                     {orders.map((order, idx) => (
+                        <tr className="text-center " key={order._id}>
                            <td>{idx + 1}</td>
                            <td>{order.buyerName}</td>
                            <td>{order.productName}</td>
-                           <td><img src={order.image}  className="w-10 h-10 rounded-circle mx-auto " alt={order.productName} /></td>
-                           <td>${order.price}</td>
-                           <td>{order.paymentStatus || <button onClick={()=> handleDelete(order)}><AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle></button>}
+                           <td>
+                              <img
+                                 src={order.image}
+                                 className="w-10 h-10 rounded-circle mx-auto "
+                                 alt={order.productName}
+                              />
                            </td>
-                           <td>{order.paymentStatus ?<span className="text-green-500 font-bold capitalize ">paid</span> : <Link to={`/dashboard/payment/${order._id}`}><button className="btn btn-sm bg-accent ">pay</button></Link>  }</td>
+                           <td>${order.price}</td>
+                           <td>
+                              {order.paymentStatus || (
+                                 <button onClick={() => handleDelete(order)}>
+                                    <AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle>
+                                 </button>
+                              )}
+                           </td>
+                           <td>
+                              {order.paymentStatus ? (
+                                 <span className="text-green-500 font-bold capitalize ">
+                                    paid
+                                 </span>
+                              ) : (
+                                 <Link to={`/dashboard/payment/${order._id}`}>
+                                    <button className="btn btn-sm bg-accent ">
+                                       pay
+                                    </button>
+                                 </Link>
+                              )}
+                           </td>
                         </tr>
-                           
-                           )
-                     }
-                    
+                     ))}
                   </tbody>
                </table>
             </div>
