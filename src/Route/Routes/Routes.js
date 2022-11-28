@@ -18,6 +18,7 @@ import AllBuyers from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers"
 import Payment from "../../Pages/Dashboard/Payment/Payment"
 import { async } from "@firebase/util"
 import { RiFileSearchFill } from "react-icons/ri"
+import ReportedProducts from "../../Pages/Dashboard/Admin/ReportedProducts/ReportedProducts"
 
 
 const Routes = createBrowserRouter([
@@ -95,6 +96,10 @@ const Routes = createBrowserRouter([
                console.log(data); 
                return data;
             }
+         }, 
+         {
+            path: '/dashboard/reported', 
+            element: <ReportedProducts></ReportedProducts>, 
          }
       ]
    }

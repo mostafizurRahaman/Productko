@@ -14,7 +14,7 @@ const Product = ({product}) => {
        .then(res =>res.json())
        .then(data => {
             if(data.acknowledged){
-                  toast.success(`${productName} is deleted successfully.`); 
+                  toast.success(`${productName} is reported successfully.`); 
                   window.location.reload()
             }
        })

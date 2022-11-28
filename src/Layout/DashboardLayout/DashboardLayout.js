@@ -48,6 +48,12 @@ const DashboardLayout = () => {
                   >
                      All Buyers 
                   </Link>
+                  <Link
+                     className=" font-bold text-xl  border-b-2  border-secondary  w-full flex h-12 hover:bg-primary  items-center justify-center text-center"
+                     to="/dashboard/reported"
+                  >
+                     Reported Items
+                  </Link>
                
             </div>
             <div className="flex grow w-full p-5 dashboardLayout min-h-screen">
