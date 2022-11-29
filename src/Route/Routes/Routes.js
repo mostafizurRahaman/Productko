@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import DashboardLayout from "../../Layout/DashboardLayout/DashboardLayout";
 import Main from "../../Layout/Main";
 import AddProducts from "../../Pages/Dashboard/Seller/AddProducts/AddProducts";
@@ -21,6 +21,9 @@ import SellerRoute from "../SellerRoute/SellerRoute";
 import Blog from "../../Pages/Blog/Blog";
 import Dashboard from "../../Pages/Dashboard/Dashboard/Dashboard";
 import ErrorPage from "../../Pages/ErrorPage/ErrorPage";
+import DisplayError from "../../Pages/Shared/DisplayError/DisplayError";
+
+
 
 const Routes = createBrowserRouter([
    {
@@ -49,13 +52,6 @@ const Routes = createBrowserRouter([
          },
          {
             path: "/category/:id",
-            element: (
-               <PrivateRoute>
-                  <BuyerRoute>
-                     <CategoryProducts></CategoryProducts>
-                  </BuyerRoute>
-               </PrivateRoute>
-            ),
             loader: async ({ params }) => {
                const res = await axios.get(
                   `https://productko-server.vercel.app/categories/${params.id}`,
@@ -69,16 +65,19 @@ const Routes = createBrowserRouter([
                );
                return res.data;
             },
-         },
-         {
-            path: "/product/:id",
             element: (
                <PrivateRoute>
                   <BuyerRoute>
-                     <BookedProduct></BookedProduct>
+                     <CategoryProducts></CategoryProducts>
                   </BuyerRoute>
                </PrivateRoute>
             ),
+            errorElement: <DisplayError></DisplayError>
+            
+         },
+         
+         {
+            path: "/product/:id",
             loader: async ({ params }) => {
                const res = await axios.get(
                   `https://productko-server.vercel.app/products/${params.id}`,
@@ -90,9 +89,17 @@ const Routes = createBrowserRouter([
                      },
                   }
                );
-               console.log(res);
                return res.data;
             },
+            element: (
+               <PrivateRoute>
+                  <BuyerRoute>
+                     <BookedProduct></BookedProduct>
+                  </BuyerRoute>
+               </PrivateRoute>
+            ),
+            errorElement: <DisplayError></DisplayError>
+           
          },
       ],
    },
@@ -167,9 +174,11 @@ const Routes = createBrowserRouter([
                      },
                   }
                );
+
                const data = await res.json();
                return data;
             },
+            errorElement: <DisplayError></DisplayError>
          },
          {
             path: "/dashboard/reported",
