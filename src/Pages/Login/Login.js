@@ -47,6 +47,9 @@ const Login = () => {
          })
          .catch((err) => {
             setGeneralError(err.message);
+         })
+         .finally(()=>{
+            setLoading(false); 
          });
    };
 
@@ -65,6 +68,9 @@ const Login = () => {
             savedUser(newUser);
          })
          .catch((err) => console.log(err))
+         .finally(()=>{
+            setLoading(false); 
+         })
    };
 
    const savedUser = (user) => {

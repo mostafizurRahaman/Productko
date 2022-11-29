@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# [Productko :](https://productko-878ac.web.app/) 
+### Productsko is a reseller website. In this website seller sells his products and buyer's buyes authentic product. 
+### Sellers: All sellers can post , delete  his products on sellers dashboard . And add products from admin route. 
+### Buyers: All sellers can buyers products, make payment , report products and delete ordered product. 
+### Admin : Admin can verify a seller , see all buyer, see all sellers , delete seller , delete buyers and  also delete all reported product. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Technology Used : 
 
-## Available Scripts
+ - **React : For front end development** 
+ - **HTML / JSX :  For Markup  Websites**  
+ - **TailwindCSS :  use as  CSS Framework**  
+ - **Express  : For create a server**  
+ - **MongoDb: As Database**
+ - **Firebase : For Authentication** 
+ - **JWT: For Authorizaiton** 
+ - **Stripe : Stripe used for getting payment.** 
+ - **vercel : For serverside deploy**
 
-In the project directory, you can run:
+## Features : 
 
-### `npm start`
+ - **Home page: In our home we have categories , advertised products, services ,  Banner.** 
+ - **Login : Login is for Login and Google Login** 
+ - **Register Form :Register an new users as  sellers and buyers.** 
+ - **Google Login : After google login user can register as  a buyer.** 
+ - **Admin Dashboard: In admin dashboard admin can see and manage sellers, buyers  and reported products and verify sellers  .** 
+ - **Buyer  Dashboard : In buyers Dashboard buyers can see his/her ordered products.** 
+ - **Seller Dashboard : In Seller Dashboard seller can post his/her products and delete products .**  
+ - **Categories Products: Buyers can see category product .** 
+ - **Booking : Buyer can order a product by clicking booked button and then fill booking form.** 
+ - **Payment : After buying a product a buyer can make payment for the booked product .** 
+ - **404 Error Page: If any user go to wrong route the 404 error page is shown .** 
+ - **Blog: For posting blogs on blog page.** 
+ - **Navbar : Navbar for easy to navigate one page to another** 
+ - **Footer : Footer section for show copy write information .** 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Admin Information : 
+#### adminEmail : mostafizurrahaman0401@gmail.com
+#### adminPass: #Mm12345#
