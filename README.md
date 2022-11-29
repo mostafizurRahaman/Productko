@@ -4,6 +4,10 @@
 ### Buyers: All sellers can buyers products, make payment , report products and delete ordered product. 
 ### Admin : Admin can verify a seller , see all buyer, see all sellers , delete seller , delete buyers and  also delete all reported product. 
 
+### live link : https://productko-878ac.web.app/
+### serverside github: https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-mostafizurRahaman.git
+###  Client side github: https://github.com/programming-hero-web-course-4/b612-used-products-resale-clients-side-mostafizurRahaman.git
+
 ## Technology Used : 
 
  - **React : For front end development** 
