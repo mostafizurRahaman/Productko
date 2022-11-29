@@ -1,7 +1,7 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import toast, { LoaderIcon } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { AiOutlineGithub } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImGoogle3 } from "react-icons/im";
