@@ -1,14 +1,16 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { useLoaderData } from "react-router-dom";
+import useTitle from "../../../hooks/useTitle";
 import CheckOutFrom from "../CheckOut/CheckOutFrom";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
 
 const Payment = () => {
    const booking = useLoaderData();
-
+   useTitle('Payment'); 
    return (
       <div className="w-full ">
          <div className="flex items-center justify-center w-full ">

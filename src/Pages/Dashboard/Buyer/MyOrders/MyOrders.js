@@ -5,10 +5,12 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
+import useTitle from "../../../../hooks/useTitle";
 import Loading from "../../../Shared/Loading/Loading";
 
 const MyOrders = () => {
    const { user, logOut } = useContext(AuthContext);
+   useTitle('My Orders')
    const {
       data: orders = [],
       isLoading,

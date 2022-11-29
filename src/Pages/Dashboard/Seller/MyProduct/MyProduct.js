@@ -6,9 +6,11 @@ import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import Loading from "../../../Shared/Loading/Loading";
 import { BiLogOut } from "react-icons/bi";
+import useTitle from "../../../../hooks/useTitle";
 
 const MyProduct = () => {
    const { user, logOut } = useContext(AuthContext);
+   useTitle('My Products'); 
 
    const {
       data: products = [],

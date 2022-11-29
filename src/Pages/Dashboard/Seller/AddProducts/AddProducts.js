@@ -5,11 +5,13 @@ import toast from "react-hot-toast";
 import { RiImageAddFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
+import useTitle from "../../../../hooks/useTitle";
 import FormError from "../../../Shared/Formsrror/FormError";
 import Loading from "../../../Shared/Loading/Loading";
 import "./AddProducts.css";
 const AddProducts = () => {
    const { user, logOut } = useContext(AuthContext);
+   useTitle("Add Product"); 
    const navigate = useNavigate();
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],

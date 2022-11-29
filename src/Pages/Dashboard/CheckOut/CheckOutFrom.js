@@ -1,11 +1,12 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../Context/AuthProvider";
+import useTitle from "../../../hooks/useTitle";
 import FormError from "../../Shared/Formsrror/FormError";
 
 const CheckOutFrom = ({ booking }) => {
    //create a state for handle payment card errors :
-
+   useTitle('checkout form'); 
    const { logOut } = useContext(AuthContext);
    const [cardErrors, setCardErrors] = useState("");
    const [clientSecret, setClientSecret] = useState("");

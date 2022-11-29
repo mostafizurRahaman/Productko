@@ -10,8 +10,10 @@ import { AuthContext } from "../../Context/AuthProvider";
 import useToken from "../../hooks/useToken";
 import toast from "react-hot-toast";
 import Loading from "../Shared/Loading/Loading";
+import useTitle from "../../hooks/useTitle";
 
 const Login = () => {
+   useTitle("login"); 
    const {
       register,
       handleSubmit,

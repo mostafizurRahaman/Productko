@@ -20,6 +20,7 @@ import BuyerRoute from "../BuyerRoute/BuyerRoute";
 import SellerRoute from "../SellerRoute/SellerRoute";
 import Blog from "../../Pages/Blog/Blog";
 import Dashboard from "../../Pages/Dashboard/Dashboard/Dashboard";
+import ErrorPage from "../../Pages/ErrorPage/ErrorPage";
 
 const Routes = createBrowserRouter([
    {
@@ -181,6 +182,10 @@ const Routes = createBrowserRouter([
          },
       ],
    },
+   {
+      path:'*', 
+      element: <ErrorPage></ErrorPage>
+   }
 ]);
 
 export default Routes;

@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import NavbarButton from "../../../Components/NavbarButton";
+import useTitle from "../../../hooks/useTitle";
 import "./Category.css"; 
 const Category = ({ category }) => {
    const { category_name, _id, image } = category;
+   useTitle(`${category_name}`); 
    return (
       <div className="transition-all duration-[2s] border-1 border-black bg-neutral  shadow-sm hover:shadow-md  shadow-neutral   flex items-center justify-center flex-col p-5 pt-10 rounded-2xl gap-7 category-card">
          <div className="overflow-hidden flex items-center justify-center h-48 rounded-full  w-48">

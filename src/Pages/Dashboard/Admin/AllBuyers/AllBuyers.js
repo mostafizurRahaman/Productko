@@ -3,10 +3,12 @@ import React, { useContext } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { AuthContext } from "../../../../Context/AuthProvider";
+import useTitle from "../../../../hooks/useTitle";
 import Loading from "../../../Shared/Loading/Loading";
 
 const AllBuyers = () => {
    const { logOut } = useContext(AuthContext);
+   useTitle('All Buyers'); 
 
    const {
       data: buyers = [],
@@ -96,7 +98,7 @@ const AllBuyers = () => {
                            </td>
                            <td>{buyer.name}</td>
                            <td> {buyer.email}</td>
-                           <td> {buyer.role}</td>
+                           <td> {buyer.role}</td> 
                            <td>
                               <RiDeleteBin2Fill
                                  onClick={() => {

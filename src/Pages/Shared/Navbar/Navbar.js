@@ -25,12 +25,13 @@ const Navbar = () => {
          <div className={` text-secondary md:text-primary flex flex-col absolute md:static top-24 right-0 md:flex-row items-center pt-5 md:pt-0  md:justify-center gap-5 md:text-xl bg-neutral md:bg-transparent  w-full  md:w-auto  h-screen md:h-auto transition-all md:transition-all duration-1000 bg-opacity-95 ${show ? 'top-24 right-0' : "right-[-999px]"} `}>
             <Link onClick={()=>setShow(!show)} to='/home'>Home</Link>
             <Link   onClick={()=>setShow(!show)} to='/dashboard'>Dashboard</Link>
+            <Link   onClick={()=>setShow(!show)} to='/blog'>Blog</Link>
            {
             user?.uid 
             ? 
 
             <>
-                <Link   onClick={()=>setShow(!show)} to='/blog'>Blog</Link>
+                
                <button onClick={()=>{
                   setShow(!show)
                   handleLogOut(); 

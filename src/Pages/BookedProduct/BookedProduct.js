@@ -3,12 +3,14 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
+import useTitle from "../../hooks/useTitle";
 import FormError from "../Shared/Formsrror/FormError";
 
 const BookedProduct = () => {
    const { logOut } = useContext(AuthContext);
    const product = useLoaderData();
    const navigate = useNavigate();
+   
    const {
       register,
       handleSubmit,
@@ -16,7 +18,7 @@ const BookedProduct = () => {
    } = useForm();
    const { user } = useContext(AuthContext);
    const { _id, productName, email, resellPrice, category, image } = product;
-
+   useTitle(`${productName}- Booking `);
    const handleBooking = (data) => {
       const date = new Date();
       const time = date.toLocaleTimeString();

@@ -1,13 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useImperativeHandle } from 'react';
 import { AuthContext } from '../../../Context/AuthProvider';
 import useIsBuyer from '../../../hooks/useIsBuyer';
 import Advertisement from '../Advertisement/Advertisement';
 import Banner from '../Banner/Banner';
 import Categories from '../Categories/Categories';
 import OurServicesSection from '../OurSevicesSection/OurServicesSection';
-
+import useTitle from '../../../hooks/useTitle'; 
 const Home = () => {
-      const {user} = useContext(AuthContext); 
+      useTitle('Home')
+
    return (
       <div>
          <Banner></Banner>

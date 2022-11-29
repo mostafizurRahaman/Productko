@@ -4,9 +4,11 @@ import Loading from "../../../Shared/Loading/Loading";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
+import useTitle from "../../../../hooks/useTitle";
 
 const AllSellers = () => {
    const { logOut } = useContext(AuthContext);
+   useTitle('All sellers'); 
    const {
       data: sellers = [],
       isLoading,

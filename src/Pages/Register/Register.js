@@ -8,12 +8,14 @@ import { ImGoogle3 } from "react-icons/im";
 import { RiImageAddFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
+import useTitle from "../../hooks/useTitle";
 import useToken from "../../hooks/useToken";
 
 import FormError from "../Shared/Formsrror/FormError";
 import Loading from "../Shared/Loading/Loading";
 import "./Register.css";
 const Register = () => {
+   useTitle('Register'); 
    const [createdEmail, setCreatedEmail] = useState("");
    const { token } = useToken(createdEmail);
    const { createUser, addInfo, GoogleSignIn } = useContext(AuthContext);

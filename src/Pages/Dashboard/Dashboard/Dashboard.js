@@ -3,12 +3,14 @@ import { AuthContext } from "../../../Context/AuthProvider";
 import useIsAdmin from "../../../hooks/useIsAdmin";
 import useIsBuyer from "../../../hooks/useIsBuyer";
 import useIsSeller from "../../../hooks/useIsSeller";
+import useTitle from "../../../hooks/useTitle";
 
 const Dashboard = () => {
    const { user } = useContext(AuthContext);
    const { isBuyer } = useIsBuyer(user?.email);
    const { isAdmin } = useIsAdmin(user?.email);
    const { isSeller } = useIsSeller(user?.email);
+   useTitle(`${user?.displayName}- dashboard`); 
    return (
       <div className="flex items-center justify-center w-full">
          <div className="rounded-2xl  bg-accent   w-96 py-5  flex items-center justify-center flex-col ">
