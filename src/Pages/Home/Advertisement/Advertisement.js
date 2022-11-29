@@ -10,19 +10,9 @@ const Advertisement = () => {
       queryKey: ["advertisements"],
       queryFn: async () => {
          const res = await fetch(
-            `https://productko-server.vercel.app/advertised`,
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
-            }
+            `https://productko-server.vercel.app/advertised`
          );
-         if (res.status === 403 || res.status === 401) {
-            logOut();
-            return;
-         }
+
          const data = await res.json();
          return data;
       },

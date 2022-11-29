@@ -151,10 +151,10 @@ const CheckOutFrom = ({ booking }) => {
          />
          <button
             type="submit"
-            disabled={!stripe || !clientSecret}
+            disabled={!stripe || !clientSecret || processing || booking.paymentStatus}
             className="btn btn-sm btn-primary text-accent font-bold mt-5  "
          >
-            Pay
+           {booking?.paymentStatus ? 'paid' : "Pay" }  
          </button>
          {cardErrors && <FormError>{cardErrors}</FormError>}
          {success && (

@@ -11,5 +11,6 @@ body, html{
   max-width: 100%;
   display: block;
   overflow-x: hidden;
+  height: 100%;
   
 }

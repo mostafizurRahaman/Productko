@@ -12,11 +12,11 @@ import Loading from "../../Pages/Shared/Loading/Loading";
 const DashboardLayout = () => {
    const [sideMenu, setSideMenu] = useState(false);
    const { user, loading } = useContext(AuthContext);
-   const { isAdmin } = useIsAdmin(user?.email);
-   const { isBuyer} = useIsBuyer(user?.email);
-   const { isSeller} = useIsSeller(user?.email);
+   const { isAdmin ,adminLoading } = useIsAdmin(user?.email);
+   const { isBuyer,buyerLoading} = useIsBuyer(user?.email);
+   const { isSeller, sellerLoading} = useIsSeller(user?.email);
 
-   if(loading){
+   if(loading || adminLoading || buyerLoading || sellerLoading){
       return <Loading></Loading>
    }
    return (

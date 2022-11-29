@@ -4,18 +4,16 @@ import useIsBuyer from '../../../hooks/useIsBuyer';
 import Advertisement from '../Advertisement/Advertisement';
 import Banner from '../Banner/Banner';
 import Categories from '../Categories/Categories';
+import OurServicesSection from '../OurSevicesSection/OurServicesSection';
 
 const Home = () => {
       const {user} = useContext(AuthContext); 
-      const {isBuyer} = useIsBuyer(user?.email); 
    return (
       <div>
          <Banner></Banner>
          <Categories></Categories>
-         {
-            isBuyer && <Advertisement></Advertisement>
-         }
-         
+         <Advertisement></Advertisement>
+         <OurServicesSection></OurServicesSection>
       </div>
    );
 };
