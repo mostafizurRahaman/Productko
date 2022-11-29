@@ -27,7 +27,7 @@ const Advertisement = () => {
          {products.length > 0 && (
             <div className="px-20 py-5 ">
                <div className="flex items-center justify-center">
-                  <h2 className="pb-2 my-12  text-4xl text-accent md:text-6xl font-bold capitalize  text-center border-b-2 border-accent ">
+                  <h2 className="pb-2 my-12  text-4xl text-accent md:text-5xl font-bold capitalize  text-center border-b-2 border-accent ">
                      Our Advertisements
                   </h2>
                </div>

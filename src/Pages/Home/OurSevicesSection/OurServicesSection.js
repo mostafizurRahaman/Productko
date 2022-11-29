@@ -7,12 +7,12 @@ const OurServicesSection = () => {
       <div className="my-20">
         
          <div className="flex items-center justify-center">
-                  <h2 className="pb-2 mt-12 mb-6  text-4xl text-accent md:text-6xl font-bold capitalize  text-center border-b-2 border-accent ">
+                  <h2 className="pb-2 mt-12 mb-6  text-4xl text-accent md:text-5xl font-bold capitalize  text-center border-b-2 border-accent ">
                     Our Services 
                   </h2>
                </div>
          <p className="text-accent text-xl capitalize  text-center mb-6">We provide the best services to customers. </p>
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 px-2 ">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-7 px-20 ">
             <div className="bg-accent text-white p-5  rounded-xl space-y-3">
                <div className="text-7xl ">
                   <FaHome></FaHome>

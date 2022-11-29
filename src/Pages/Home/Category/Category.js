@@ -15,7 +15,7 @@ const Category = ({ category }) => {
             />
          </div>
          <div className="w-full flex items-center justify-between ">
-            <h2 className='text-secondary  font-bold text-4xl  capitalize '>{category_name}</h2>
+            <h2 className='text-secondary  font-bold text-4xl  capitalize  '>{category_name}</h2>
             <Link to={`/category/${_id}`}>
                <NavbarButton btnContent="see products"></NavbarButton>
             </Link>

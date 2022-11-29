@@ -16,9 +16,11 @@ const Categories = () => {
 
    return (
       <div className="py-14">
-         <h2 className="text-4xl font-bold capitalize text-neutral text-center">
-            Our Categories
-         </h2>
+         <div className="flex items-center justify-center">
+                  <h2 className="pb-2 mt-12 mb-6  text-4xl text-accent md:text-5xl font-bold capitalize  text-center border-b-2 border-accent ">
+                  Our Categories
+                  </h2>
+               </div>
          <p className="text-neutral mt-4 text-capitalize text-xl text-center">
             Productko's all categories are available here. You can see all
             product's here by clicking our categories .{" "}
