@@ -52,19 +52,19 @@ const Routes = createBrowserRouter([
          },
          {
             path: "/category/:id",
-            loader: async ({ params }) => {
-               const res = await axios.get(
-                  `https://productko-server.vercel.app/categories/${params.id}`,
-                  {
-                     headers: {
-                        authorization: `bearer ${localStorage.getItem(
-                           "productKoToken"
-                        )}`,
-                     },
-                  }
-               );
-               return res.data;
-            },
+            // loader: async ({ params }) => {
+            //    const res = await axios.get(
+            //       `https://productko-server.vercel.app/categories/${params.id}`,
+            //       {
+            //          headers: {
+            //             authorization: `bearer ${localStorage.getItem(
+            //                "productKoToken"
+            //             )}`,
+            //          },
+            //       }
+            //    );
+            //    return res.data;
+            // },
             element: (
                <PrivateRoute>
                   <BuyerRoute>
@@ -72,25 +72,25 @@ const Routes = createBrowserRouter([
                   </BuyerRoute>
                </PrivateRoute>
             ),
-            errorElement: <DisplayError></DisplayError>
+            // errorElement: <DisplayError></DisplayError>
             
          },
          
          {
             path: "/product/:id",
-            loader: async ({ params }) => {
-               const res = await axios.get(
-                  `https://productko-server.vercel.app/products/${params.id}`,
-                  {
-                     headers: {
-                        authorization: `bearer ${localStorage.getItem(
-                           "productKoToken"
-                        )}`,
-                     },
-                  }
-               );
-               return res.data;
-            },
+            // loader: async ({ params }) => {
+            //    const res = await axios.get(
+            //       `https://productko-server.vercel.app/products/${params.id}`,
+            //       {
+            //          headers: {
+            //             authorization: `bearer ${localStorage.getItem(
+            //                "productKoToken"
+            //             )}`,
+            //          },
+            //       }
+            //    );
+            //    return res.data;
+            // },
             element: (
                <PrivateRoute>
                   <BuyerRoute>
@@ -98,7 +98,7 @@ const Routes = createBrowserRouter([
                   </BuyerRoute>
                </PrivateRoute>
             ),
-            errorElement: <DisplayError></DisplayError>
+            // errorElement: <DisplayError></DisplayError>
            
          },
       ],

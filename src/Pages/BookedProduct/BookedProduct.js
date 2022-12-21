@@ -1,14 +1,17 @@
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
 import useTitle from "../../hooks/useTitle";
 import FormError from "../Shared/Formsrror/FormError";
 
 const BookedProduct = () => {
    const { logOut } = useContext(AuthContext);
-   const product = useLoaderData();
+   // const product = useLoaderData();
+   
+   const {id} = useParams(); 
+
    const navigate = useNavigate();
    
    const {
