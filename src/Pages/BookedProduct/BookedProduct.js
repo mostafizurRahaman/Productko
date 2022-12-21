@@ -1,27 +1,55 @@
+
+import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
 import useTitle from "../../hooks/useTitle";
 import FormError from "../Shared/Formsrror/FormError";
 
+
 const BookedProduct = () => {
    const { logOut } = useContext(AuthContext);
    // const product = useLoaderData();
-   
-   const {id} = useParams(); 
 
+   const { id } = useParams();
+   console.log(id); 
+   const { data:product=[] , isLoading } = useQuery({
+      queryKey: ["product", id],
+      queryFn: async () => {
+         const res = await fetch(
+            `https://productko-server.vercel.app/products/${id}`,
+            {
+               headers: {
+                  authorization: `bearer ${localStorage.getItem(
+                     "productKoToken"
+                  )}`,
+               },
+            }
+         );
+         if(res.status === 403 || res.status === 401) {
+               logOut(); 
+            return;
+         }
+         const data = await res.json();
+         return data;
+      },
+   });
+   console.log(product); 
    const navigate = useNavigate();
-   
+
    const {
       register,
       handleSubmit,
       formState: { errors },
    } = useForm();
    const { user } = useContext(AuthContext);
+   
+ 
    const { _id, productName, email, resellPrice, category, image } = product;
    useTitle(`${productName}- Booking `);
+  
    const handleBooking = (data) => {
       const date = new Date();
       const time = date.toLocaleTimeString();
@@ -63,6 +91,8 @@ const BookedProduct = () => {
          })
          .catch((err) => console.log(err));
    };
+
+   
    return (
       <div className="flex items-center justify-center  min-h-screen w-full  py-5">
          <form

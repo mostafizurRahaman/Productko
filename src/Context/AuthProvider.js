@@ -27,8 +27,8 @@ const AuthProvider = ({ children }) => {
    };
 
    const logOut = () => {
-      setLoading(true); 
       localStorage.removeItem('productKoToken'); 
+      setLoading(true); 
       return signOut(auth);
    };
 

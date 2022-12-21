@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useContext } from "react";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
 import Product from "../../Shared/Product/Product";
 
@@ -24,7 +24,7 @@ const CategoryProducts = () => {
                },
             }
          );
-         if (res.status === 401 && res.status === 403) {
+         if (res.status === 403 || res.status === 401) {
             logOut();
             return;
          }
