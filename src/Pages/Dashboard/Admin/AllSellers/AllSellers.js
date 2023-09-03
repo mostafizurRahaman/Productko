@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext, useState } from "react";
-import Loading from "../../../Shared/Loading/Loading";
+import React, { useContext } from "react";
+import Loading from "../../../../Components/Loading/Loading";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
@@ -8,7 +8,7 @@ import useTitle from "../../../../hooks/useTitle";
 
 const AllSellers = () => {
    const { logOut } = useContext(AuthContext);
-   useTitle('All sellers'); 
+   useTitle("All sellers");
    const {
       data: sellers = [],
       isLoading,

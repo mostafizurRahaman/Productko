@@ -1,23 +1,23 @@
 import React, { useContext, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import Navbar from "../../Pages/Shared/Navbar/Navbar";
+import Navbar from "../../Components/Navbar/Navbar";
 import { BiShow, BiHide } from "react-icons/bi";
 import "./DashboardLayout.css";
 import useIsAdmin from "../../hooks/useIsAdmin";
 import { AuthContext } from "../../Context/AuthProvider";
 import useIsBuyer from "../../hooks/useIsBuyer";
 import useIsSeller from "../../hooks/useIsSeller";
-import Loading from "../../Pages/Shared/Loading/Loading";
+import Loading from "../../Components/Loading/Loading";
 
 const DashboardLayout = () => {
    const [sideMenu, setSideMenu] = useState(false);
    const { user, loading } = useContext(AuthContext);
-   const { isAdmin ,adminLoading } = useIsAdmin(user?.email);
-   const { isBuyer,buyerLoading} = useIsBuyer(user?.email);
-   const { isSeller, sellerLoading} = useIsSeller(user?.email);
+   const { isAdmin, adminLoading } = useIsAdmin(user?.email);
+   const { isBuyer, buyerLoading } = useIsBuyer(user?.email);
+   const { isSeller, sellerLoading } = useIsSeller(user?.email);
 
-   if(loading || adminLoading || buyerLoading || sellerLoading){
-      return <Loading></Loading>
+   if (loading || adminLoading || buyerLoading || sellerLoading) {
+      return <Loading></Loading>;
    }
    return (
       <div className="relative">

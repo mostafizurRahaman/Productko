@@ -2,11 +2,11 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
-import FormError from "../../Shared/Formsrror/FormError";
+import FormError from "../../../Components/Formsrror/FormError";
 
 const CheckOutFrom = ({ booking }) => {
    //create a state for handle payment card errors :
-   useTitle('checkout form'); 
+   useTitle("checkout form");
    const { logOut } = useContext(AuthContext);
    const [cardErrors, setCardErrors] = useState("");
    const [clientSecret, setClientSecret] = useState("");
@@ -152,10 +152,12 @@ const CheckOutFrom = ({ booking }) => {
          />
          <button
             type="submit"
-            disabled={!stripe || !clientSecret || processing || booking.paymentStatus}
+            disabled={
+               !stripe || !clientSecret || processing || booking.paymentStatus
+            }
             className="btn btn-sm btn-primary text-accent font-bold mt-5  "
          >
-           {booking?.paymentStatus ? 'paid' : "Pay" }  
+            {booking?.paymentStatus ? "paid" : "Pay"}
          </button>
          {cardErrors && <FormError>{cardErrors}</FormError>}
          {success && (

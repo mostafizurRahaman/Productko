@@ -2,11 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import DashboardLayout from "../../Layout/DashboardLayout/DashboardLayout";
 import Main from "../../Layout/Main";
 import AddProducts from "../../Pages/Dashboard/Seller/AddProducts/AddProducts";
-import CategoryProducts from "../../Pages/Home/CategoryProducts/CategoryProducts";
-import Home from "../../Pages/Home/Home/Home";
+import Home from "../../Pages/Home/Home";
 import Login from "../../Pages/Login/Login";
 import Register from "../../Pages/Register/Register";
-import axios from "axios";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import BookedProduct from "../../Pages/BookedProduct/BookedProduct";
 import MyOrders from "../../Pages/Dashboard/Buyer/MyOrders/MyOrders";
@@ -21,10 +19,8 @@ import SellerRoute from "../SellerRoute/SellerRoute";
 import Blog from "../../Pages/Blog/Blog";
 import Dashboard from "../../Pages/Dashboard/Dashboard/Dashboard";
 import ErrorPage from "../../Pages/ErrorPage/ErrorPage";
-import DisplayError from "../../Pages/Shared/DisplayError/DisplayError";
-
-
-
+import CategoryProducts from "../../Pages/CategoryProducts/CategoryProducts";
+import DisplayError from "../../Components/DisplayError/DisplayError";
 const Routes = createBrowserRouter([
    {
       path: "/",
@@ -65,17 +61,10 @@ const Routes = createBrowserRouter([
             //    );
             //    return res.data;
             // },
-            element: (
-               <PrivateRoute>
-                  <BuyerRoute>
-                     <CategoryProducts></CategoryProducts>
-                  </BuyerRoute>
-               </PrivateRoute>
-            ),
+            element: <CategoryProducts></CategoryProducts>,
             // errorElement: <DisplayError></DisplayError>
-            
          },
-         
+
          {
             path: "/product/:id",
             // loader: async ({ params }) => {
@@ -99,7 +88,6 @@ const Routes = createBrowserRouter([
                </PrivateRoute>
             ),
             // errorElement: <DisplayError></DisplayError>
-           
          },
       ],
    },
@@ -112,8 +100,12 @@ const Routes = createBrowserRouter([
       ),
       children: [
          {
-            path: "/dashboard/", 
-            element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>, 
+            path: "/dashboard/",
+            element: (
+               <PrivateRoute>
+                  <Dashboard></Dashboard>
+               </PrivateRoute>
+            ),
          },
          {
             path: "/dashboard/addProducts",
@@ -178,7 +170,7 @@ const Routes = createBrowserRouter([
                const data = await res.json();
                return data;
             },
-            errorElement: <DisplayError></DisplayError>
+            errorElement: <DisplayError></DisplayError>,
          },
          {
             path: "/dashboard/reported",
@@ -192,9 +184,9 @@ const Routes = createBrowserRouter([
       ],
    },
    {
-      path:'*', 
-      element: <ErrorPage></ErrorPage>
-   }
+      path: "*",
+      element: <ErrorPage></ErrorPage>,
+   },
 ]);
 
 export default Routes;

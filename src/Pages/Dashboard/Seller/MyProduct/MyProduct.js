@@ -4,13 +4,12 @@ import React, { useContext } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
-import Loading from "../../../Shared/Loading/Loading";
-import { BiLogOut } from "react-icons/bi";
+import Loading from "../../../../Components/Loading/Loading";
 import useTitle from "../../../../hooks/useTitle";
 
 const MyProduct = () => {
    const { user, logOut } = useContext(AuthContext);
-   useTitle('My Products'); 
+   useTitle("My Products");
 
    const {
       data: products = [],

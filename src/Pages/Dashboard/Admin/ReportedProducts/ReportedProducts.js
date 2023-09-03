@@ -4,11 +4,11 @@ import toast from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
-import Loading from "../../../Shared/Loading/Loading";
+import Loading from "../../../../Components/Loading/Loading";
 
 const ReportedProducts = () => {
    const { logOut } = useContext(AuthContext);
-   useTitle('Reported Products'); 
+   useTitle("Reported Products");
    const {
       data: products = [],
       isLoading,

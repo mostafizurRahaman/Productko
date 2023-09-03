@@ -1,16 +1,16 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Footer from '../Pages/Shared/Footer/Footer';
-import Navbar from '../Pages/Shared/Navbar/Navbar';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Navbar from "../Components/Navbar/Navbar";
+import Footer from "../Components/Footer/Footer";
 
 const Main = () => {
    return (
       <div>
-         <Navbar></Navbar>
-            <div className='min-h-screen '>
-               <Outlet></Outlet>
-            </div>
-         <Footer></Footer>
+         <Navbar />
+         <div className="min-h-screen ">
+            <Outlet></Outlet>
+         </div>
+         <Footer />
       </div>
    );
 };

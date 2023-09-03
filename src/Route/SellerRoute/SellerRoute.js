@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
 import useIsSeller from '../../hooks/useIsSeller';
-import Loading from '../../Pages/Shared/Loading/Loading';
+import Loading from '../../Components/Loading/Loading';
 
 
 const SellerRoute = ({children}) => {

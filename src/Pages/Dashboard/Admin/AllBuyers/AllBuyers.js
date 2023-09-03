@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
-import Loading from "../../../Shared/Loading/Loading";
+import Loading from "../../../../Components/Loading/Loading";
 
 const AllBuyers = () => {
    const { logOut } = useContext(AuthContext);

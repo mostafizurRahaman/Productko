@@ -5,15 +5,15 @@ import { AiOutlineGithub } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import "./Login.css";
 import { useForm } from "react-hook-form";
-import FormError from "../Shared/Formsrror/FormError";
+import FormError from "../../Components/Formsrror/FormError";
 import { AuthContext } from "../../Context/AuthProvider";
 import useToken from "../../hooks/useToken";
 import toast from "react-hot-toast";
-import Loading from "../Shared/Loading/Loading";
+import Loading from "../../Components/Loading/Loading";
 import useTitle from "../../hooks/useTitle";
 
 const Login = () => {
-   useTitle("login"); 
+   useTitle("login");
    const {
       register,
       handleSubmit,
@@ -42,14 +42,14 @@ const Login = () => {
          .then((res) => {
             const user = res.user;
             setLoginEmail(user.email);
-            toast.success('Login successfully'); 
+            toast.success("Login successfully");
             setLoading(false);
          })
          .catch((err) => {
             setGeneralError(err.message);
          })
-         .finally(()=>{
-            setLoading(false); 
+         .finally(() => {
+            setLoading(false);
          });
    };
 
@@ -68,9 +68,9 @@ const Login = () => {
             savedUser(newUser);
          })
          .catch((err) => console.log(err))
-         .finally(()=>{
-            setLoading(false); 
-         })
+         .finally(() => {
+            setLoading(false);
+         });
    };
 
    const savedUser = (user) => {
@@ -79,13 +79,13 @@ const Login = () => {
          headers: {
             "content-type": "application/json",
          },
-         body: JSON.stringify(user), 
+         body: JSON.stringify(user),
       })
          .then((res) => res.json())
          .then((data) => {
             if (data.acknowledged || data.alreadyAdded) {
                setLoginEmail(user.email);
-              
+
                toast.success(
                   `Congratulations ${user.name}, your account created Successfully`
                );

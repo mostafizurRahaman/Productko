@@ -6,12 +6,12 @@ import { RiImageAddFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
-import FormError from "../../../Shared/Formsrror/FormError";
-import Loading from "../../../Shared/Loading/Loading";
+import FormError from "../../../../Components/Formsrror/FormError";
+import Loading from '../../../../Components/Loading/Loading';
 import "./AddProducts.css";
 const AddProducts = () => {
    const { user, logOut } = useContext(AuthContext);
-   useTitle("Add Product"); 
+   useTitle("Add Product");
    const navigate = useNavigate();
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
@@ -24,8 +24,6 @@ const AddProducts = () => {
       },
    });
 
-   
-
    const {
       register,
       handleSubmit,
@@ -34,10 +32,9 @@ const AddProducts = () => {
    if (!user) {
       return <Loading></Loading>;
    }
-   
 
-   const imageHostKey = process.env.REACT_APP_Image_BB_KEY; 
-  
+   const imageHostKey = process.env.REACT_APP_Image_BB_KEY;
+
    const handleAddProduct = (data) => {
       const image = data.image[0];
       const formData = new FormData();
