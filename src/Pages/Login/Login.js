@@ -11,6 +11,7 @@ import useToken from "../../hooks/useToken";
 import toast from "react-hot-toast";
 import Loading from "../../Components/Loading/Loading";
 import useTitle from "../../hooks/useTitle";
+import { baseURL } from "../../configs/configs";
 
 const Login = () => {
    useTitle("login");
@@ -64,6 +65,7 @@ const Login = () => {
                email: user.email,
                photoURL: user.photoURL,
                role: "buyer",
+               isVerified: false,
             };
             savedUser(newUser);
          })
@@ -74,7 +76,7 @@ const Login = () => {
    };
 
    const savedUser = (user) => {
-      fetch("https://productko-server.vercel.app/users", {
+      fetch(`${baseURL}/user/sign-up`, {
          method: "POST",
          headers: {
             "content-type": "application/json",
@@ -83,12 +85,9 @@ const Login = () => {
       })
          .then((res) => res.json())
          .then((data) => {
-            if (data.acknowledged || data.alreadyAdded) {
-               setLoginEmail(user.email);
-
-               toast.success(
-                  `Congratulations ${user.name}, your account created Successfully`
-               );
+            if (data.status === "success") {
+               setLoginEmail(data.data.email);
+               toast.success("Your are logged In successfully");
                setLoading(false);
             }
          })
