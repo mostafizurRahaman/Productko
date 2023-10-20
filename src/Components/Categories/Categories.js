@@ -1,17 +1,15 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Category from "../Category/Category";
+import { baseURL } from "../../configs/configs";
 
 const Categories = () => {
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
-         const res = await fetch(
-            "https://productko-server.vercel.app/categories"
-         );
+         const res = await fetch(`${baseURL}/category`);
          const data = await res.json();
-         console.log(data);
-         return data;
+         return data?.data;
       },
    });
 
