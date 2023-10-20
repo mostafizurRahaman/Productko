@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
+import { baseURL } from "../configs/configs";
 
 const useToken = (email) => {
    const [token, setToken] = useState("");
    useEffect(() => {
       if (email) {
-         fetch(`https://productko-server.vercel.app/jwt?email=${email}`)
+         fetch(`${baseURL}/user/jwt?email=${email}`)
             .then((res) => res.json())
             .then((data) => {
-               setToken(data.token);
-               localStorage.setItem("productKoToken", data.token);
+               if (data.status === "success") {
+                  setToken(data?.data?.accessToken);
+                  console.log(data?.data?.accessToken);
+                  localStorage.setItem(
+                     "productKoToken",
+                     data.data?.accessToken
+                  );
+               }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+               console.log(err);
+            });
       }
    }, [email]);
 
