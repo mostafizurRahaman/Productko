@@ -28,6 +28,7 @@ const Banner = () => {
                alt="reseller_image"
                className="md:w-full mx-auto"
             />
+            {/*  */}
          </div>
       </div>
    );
