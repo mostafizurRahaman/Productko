@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import Loading from "../../../../Components/Loading/Loading";
 import useTitle from "../../../../hooks/useTitle";
+import { accessToken, baseURL } from "../../../../configs/configs";
+import { format } from "date-fns";
 
 const MyProduct = () => {
    const { user, logOut } = useContext(AuthContext);
@@ -18,22 +20,23 @@ const MyProduct = () => {
    } = useQuery({
       queryKey: ["products", user?.email],
       queryFn: async () => {
-         const res = await fetch(
-            `https://productko-server.vercel.app/products?email=${user.email}`,
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
+         if (user?.email) {
+            const res = await fetch(
+               `${baseURL}/product?sellerInfo.email=${user?.email}`,
+               {
+                  headers: {
+                     authorization: accessToken,
+                  },
+               }
+            );
+            if (res.status === 401 || res.status === 403) {
+               logOut();
+               return;
             }
-         );
-         if (res.status === 401 || res.status === 403) {
-            logOut();
-            return;
+            const data = await res.json();
+            return data.data.products;
          }
-         const data = await res.json();
-         return data;
+         return [];
       },
    });
 
@@ -41,55 +44,55 @@ const MyProduct = () => {
       return <Loading></Loading>;
    }
 
-   const handleAdvertise = (product) => {
-      fetch(`https://productko-server.vercel.app/products/${product._id}`, {
-         method: "PUT",
-         headers: {
-            "content-type": "application/json",
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-         body: JSON.stringify({ isAdvertised: true }),
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
+   const handleAdvertise = async (product) => {
+      console.log(product._id);
+      try {
+         const res = await fetch(`${baseURL}/product/${product._id}`, {
+            method: "PATCH",
+            headers: {
+               "content-type": "application/json",
+               authorization: accessToken,
+            },
+            body: JSON.stringify({ isAdvertised: true }),
+         });
 
-            return res.json();
-         })
-         .then((data) => {
-            if (data.modifiedCount) {
-               toast.success(`${product.productName} is added for advertised.`);
-               refetch();
-            }
-         })
-         .catch((err) => console.log(err));
+         if (res.status === 403 || res.status === 401) {
+            logOut();
+            return;
+         }
+
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success("Product advertisement enabled");
+            console.log(data);
+            refetch();
+         }
+      } catch (err) {
+         toast.error(err.message);
+         console.log(err);
+      }
    };
 
-   const handleDelete = (product) => {
-      fetch(`https://productko-server.vercel.app/products/${product._id}`, {
-         method: "Delete",
-         headers: {
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
-
-            return res.json();
-         })
-         .then((data) => {
-            console.log(data);
-            if (data.deletedCount > 0) {
-               toast.success(`${product.productName} is deleted  Successfully`);
-               refetch();
-            }
-         })
-         .catch((err) => console.log(err));
+   const handleDelete = async (product) => {
+      console.log(product);
+      try {
+         const res = await fetch(`${baseURL}/product/${product._id}`, {
+            method: "Delete",
+            headers: {
+               authorization: accessToken,
+            },
+         });
+         if (res.status === 403 || res.status === 401) {
+            return logOut();
+         }
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         }
+      } catch (err) {
+         console.log(err);
+      }
    };
    return (
       <div className=" w-full">
@@ -105,10 +108,10 @@ const MyProduct = () => {
                      <tr>
                         <th>S.I.</th>
                         <th>product</th>
-                        <th>posted date</th>
-                        <th>posted time</th>
+                        <th>CreatedAt</th>
+                        <th>updatedAt</th>
                         <th>price</th>
-                        <th>isBooked </th>
+                        <th>status </th>
                         <th>payment status</th>
                         <th>Action</th>
                         <th>advertise</th>
@@ -118,34 +121,76 @@ const MyProduct = () => {
                      {products.map((product, idx) => (
                         <tr key={product._id}>
                            <th>{idx + 1}</th>
-                           <td>{product.productName}</td>
-                           <td>{product.postDate}</td>
-                           <td>{product.postTime}</td>
+                           <td>{product.name}</td>
+                           <td>
+                              <div className="flex gap-1">
+                                 <span>
+                                    {format(
+                                       new Date(
+                                          product.createdAt || Date.now()
+                                       ),
+                                       "dd/MM/yyyy"
+                                    )}{" "}
+                                    at
+                                 </span>
+                                 <span>
+                                    {format(
+                                       new Date(
+                                          product.createdAt || Date.now()
+                                       ),
+                                       "h : mm aa "
+                                    )}
+                                 </span>
+                              </div>
+                           </td>
+                           <td>
+                              <div className="flex gap-1">
+                                 <span>
+                                    {format(
+                                       new Date(
+                                          product.createdAt || Date.now()
+                                       ),
+                                       "dd/MM/yyyy"
+                                    )}{" "}
+                                    at
+                                 </span>
+                                 <span>
+                                    {format(
+                                       new Date(
+                                          product.createdAt || Date.now()
+                                       ),
+                                       "h : mm aa "
+                                    )}
+                                 </span>
+                              </div>
+                           </td>
                            <td>${product.resellPrice}</td>
                            <td>
-                              {product.isBooked ? (
-                                 <span className="text-secondary px-2 py-1 rounded bg-red-500  font-bold capitalize ">
-                                    Booked
-                                 </span>
-                              ) : (
-                                 <span className="text-green-500 text-center font-bold uppercase ">
-                                    available
-                                 </span>
-                              )}
+                              <span
+                                 className={`px-3 py-1 rounded-md  ${
+                                    product.status === "available"
+                                 }`}
+                              >
+                                 {product.status}
+                              </span>
                            </td>
                            <td className="">
-                              {product.paymentStatus ? (
-                                 <span className="text-red-500 font-bold capitalize">
-                                    sold
+                              {product.status === "booked" ? (
+                                 <span
+                                    className={` font-bold uppercase ${
+                                       product.payStatus === "paid"
+                                          ? "text-green-500"
+                                          : "text-red-500"
+                                    }`}
+                                 >
+                                    {product.payStatus}
                                  </span>
                               ) : (
-                                 <span className="text-green-500 font-bold capitalize">
-                                    available
-                                 </span>
+                                 "-"
                               )}
                            </td>
                            <td>
-                              {product.isBooked || product.paymentStatus || (
+                              {product.status !== "booked" && (
                                  <button onClick={() => handleDelete(product)}>
                                     <AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle>
                                  </button>
@@ -153,7 +198,7 @@ const MyProduct = () => {
                            </td>
 
                            <td>
-                              {product.paymentStatus || (
+                              {product.status === "available" && (
                                  <button
                                     onClick={() => handleAdvertise(product)}
                                     className={`btn btn-sm   text-secondary   font-bold text-base ${
