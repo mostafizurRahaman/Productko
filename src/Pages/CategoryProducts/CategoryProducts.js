@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { AuthContext } from "../../Context/AuthProvider";
 import Product from "../../Components/Product/Product";
 import { accessToken, baseURL } from "../../configs/configs";
 
 const CategoryProducts = () => {
-   const { logOut } = useContext(AuthContext);
-   // const products = useLoaderData();
+   
    let { id } = useParams();
    console.log(id);
 
@@ -16,7 +13,7 @@ const CategoryProducts = () => {
       queryKey: ["products", id],
       queryFn: async () => {
          const res = await fetch(
-            `${baseURL}/product?category=${id}&status=available`,
+            `${baseURL}/product?category=${id}&status[$ne]=booked`,
             {
                headers: {
                   authorization: `${accessToken}`,

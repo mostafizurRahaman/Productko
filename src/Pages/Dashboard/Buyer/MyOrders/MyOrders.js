@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
 import Loading from "../../../../Components/Loading/Loading";
-
+import { accessToken, baseURL } from "../../../../configs/configs";
 const MyOrders = () => {
    const { user, logOut } = useContext(AuthContext);
    useTitle("My Orders");
@@ -18,22 +18,25 @@ const MyOrders = () => {
    } = useQuery({
       queryKey: ["orders", user?.email],
       queryFn: async () => {
-         const res = await fetch(
-            `https://productko-server.vercel.app/bookings?email=${user?.email}`,
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
+         if (user?.email) {
+            const res = await fetch(
+               `${baseURL}/booking?buyerInfo.email=${user?.email}`,
+               {
+                  headers: {
+                     "content-type": "application/json",
+                     authorization: accessToken,
+                  },
+               }
+            );
+            if (res.status === 401 || res.status === 403) {
+               logOut();
+               return;
             }
-         );
-         if (res.status === 401 || res.status === 403) {
-            logOut();
-            return;
+            const data = await res.json();
+            console.log(data);
+            return data.data.bookings;
          }
-         const data = await res.json();
-         return data;
+         return [];
       },
    });
 
@@ -41,31 +44,32 @@ const MyOrders = () => {
       return <Loading></Loading>;
    }
 
-   const handleDelete = (order) => {
-      console.log(order);
-      fetch(`https://productko-server.vercel.app/bookings/${order._id}`, {
-         method: "delete",
-         headers: {
-            "content-type": "application/json",
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-         body: JSON.stringify(order),
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
+   const handleDelete = async (order) => {
+      try {
+         console.log(order);
+         const res = await fetch(`${baseURL}/booking/${order._id}`, {
+            method: "delete",
+            headers: {
+               "content-type": "application/json",
+               authorization: accessToken,
+            },
+            body: JSON.stringify(order),
+         });
 
-            return res.json();
-         })
-         .then((data) => {
-            if (data.deletedCount > 0) {
-               toast.success(`${order.productName} is deleted successfully`);
-               refetch();
-            }
-         })
-         .catch((err) => console.log(err));
+         if (res.status === 403 || res.status === 401) {
+            logOut();
+            return;
+         }
+
+         const data = await res.json();
+
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         }
+      } catch (err) {
+         console.log(err);
+      }
    };
    console.log(orders);
    return (
@@ -85,43 +89,55 @@ const MyOrders = () => {
                         <th>Product</th>
                         <th>product Image</th>
                         <th>price</th>
-                        <th>action </th>
                         <th>Payment status</th>
+                        <th>action </th>
                      </tr>
                   </thead>
                   <tbody className="text-accent font-semibold  text-center ">
                      {orders.map((order, idx) => (
                         <tr className="text-center " key={order._id}>
                            <td>{idx + 1}</td>
-                           <td>{order.buyerName}</td>
-                           <td>{order.productName}</td>
+                           <td>{order?.buyerInfo?.id?.name}</td>
+                           <td>{order?.product?.name}</td>
                            <td>
                               <img
-                                 src={order.image}
+                                 src={order?.product?.image}
                                  className="w-10 h-10 rounded-circle mx-auto "
-                                 alt={order.productName}
+                                 alt={order?.product?.name}
                               />
                            </td>
-                           <td>${order.price}</td>
+                           <td>${order?.price}</td>
+
                            <td>
-                              {order.paymentStatus || (
-                                 <button onClick={() => handleDelete(order)}>
-                                    <AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle>
-                                 </button>
-                              )}
+                              <p
+                                 className={`text-white px-2 py-1 inline-block rounded-md text-xs capitalize ${
+                                    order.status === "pending"
+                                       ? "bg-orange-500"
+                                       : "bg-red-500"
+                                 } ${
+                                    order.status === "paid" && "bg-green-600"
+                                 }`}
+                              >
+                                 {order.status}
+                              </p>
                            </td>
                            <td>
-                              {order.paymentStatus ? (
-                                 <span className="text-green-500 font-bold capitalize ">
-                                    paid
-                                 </span>
-                              ) : (
-                                 <Link to={`/dashboard/payment/${order._id}`}>
-                                    <button className="btn btn-sm bg-accent ">
-                                       pay
+                              <div className="flex gap-1 items-center justify-center">
+                                 {order.status === "paid" || (
+                                    <button onClick={() => handleDelete(order)}>
+                                       <AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle>
                                     </button>
-                                 </Link>
-                              )}
+                                 )}
+                                 {order.status === "pending" && (
+                                    <Link
+                                       to={`/dashboard/payment/${order._id}`}
+                                    >
+                                       <button className="btn btn-sm bg-accent ">
+                                          pay
+                                       </button>
+                                    </Link>
+                                 )}
+                              </div>
                            </td>
                         </tr>
                      ))}

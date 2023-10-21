@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthProvider";
+import { baseURL } from "../configs/configs";
 
 const useIsSeller = (email) => {
    const { logOut } = useContext(AuthContext);
@@ -7,7 +8,7 @@ const useIsSeller = (email) => {
    const [sellerLoading, setSellerLoading] = useState(true);
    useEffect(() => {
       if (email) {
-         fetch(`https://productko-server.vercel.app/users/seller/${email}`, {
+         fetch(`${baseURL}/user/me`, {
             headers: {
                authorization: `Bearer ${localStorage.getItem(
                   "productKoToken"
@@ -22,7 +23,7 @@ const useIsSeller = (email) => {
                return res.json();
             })
             .then((data) => {
-               setIsSeller(data.isSeller);
+               setIsSeller(data.data.isSeller);
                setSellerLoading(false);
             })
             .catch((err) => console.log(err));
