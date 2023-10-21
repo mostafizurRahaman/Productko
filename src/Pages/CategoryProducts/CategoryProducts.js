@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { AuthContext } from "../../Context/AuthProvider";
 import Product from "../../Components/Product/Product";
+import { accessToken, baseURL } from "../../configs/configs";
 
 const CategoryProducts = () => {
-   const { logOut } = useContext(AuthContext);
-   // const products = useLoaderData();
+   
    let { id } = useParams();
    console.log(id);
 
@@ -15,21 +13,20 @@ const CategoryProducts = () => {
       queryKey: ["products", id],
       queryFn: async () => {
          const res = await fetch(
-            `https://productko-server.vercel.app/categories/${id}`,
+            `${baseURL}/product?category=${id}&status[$ne]=booked`,
             {
                headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
+                  authorization: `${accessToken}`,
                },
             }
          );
-         if (res.status === 403 || res.status === 401) {
-            logOut();
-            return;
-         }
+         // if (res.status === 403 || res.status === 401) {
+         //    logOut();
+         //    return;
+         // }
          const data = await res.json();
-         return data;
+         console.log(data);
+         return data.data.products;
       },
    });
 

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthProvider";
+import { baseURL } from "../configs/configs";
 
 const useIsAdmin = (email) => {
    const { logOut } = useContext(AuthContext);
@@ -7,7 +8,7 @@ const useIsAdmin = (email) => {
    const [adminLoading, setAdminLoading] = useState(true);
    useEffect(() => {
       if (email) {
-         fetch(`https://productko-server.vercel.app/users/admin/${email}`, {
+         fetch(`${baseURL}/user/me`, {
             headers: {
                authorization: `Bearer ${localStorage.getItem(
                   "productKoToken"
@@ -22,7 +23,8 @@ const useIsAdmin = (email) => {
                return res.json();
             })
             .then((data) => {
-               setIsAdmin(data.isAdmin);
+               console.log(data);
+               setIsAdmin(data.data.isAdmin);
                setAdminLoading(false);
             })
             .catch((err) => console.log(err));

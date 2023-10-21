@@ -7,20 +7,32 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
 import FormError from "../../../../Components/Formsrror/FormError";
-import Loading from '../../../../Components/Loading/Loading';
+import Loading from "../../../../Components/Loading/Loading";
 import "./AddProducts.css";
+import { accessToken, baseURL } from "../../../../configs/configs";
 const AddProducts = () => {
    const { user, logOut } = useContext(AuthContext);
    useTitle("Add Product");
    const navigate = useNavigate();
+
    const { data: categories = [], isLoading } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
-         const res = await fetch(
-            "https://productko-server.vercel.app/categories"
-         );
+         const res = await fetch(`${baseURL}/category`);
          const data = await res.json();
-         return data;
+         console.log(data);
+         return data.data;
+      },
+   });
+   const { data: currentUser = {} } = useQuery({
+      queryKey: ["currentUser", user?.email],
+      queryFn: async () => {
+         if (user?.email) {
+            const res = await fetch(`${baseURL}/user?email=${user?.email}`);
+            const data = await res.json();
+            return data.data.users[0];
+         }
+         return {};
       },
    });
 
@@ -47,33 +59,30 @@ const AddProducts = () => {
          .then((imageData) => {
             if (imageData.success) {
                const img = imageData.data.url;
-               const date = new Date();
-               const currentTime = date.toLocaleTimeString();
-               const currentDate = date.toLocaleDateString();
                const product = {
-                  sellerName: data.sellerName,
-                  email: data.email,
-                  phone: data.phone,
-                  productName: data.productName,
+                  name: data.productName,
+                  description: data.description,
+                  category: data.category,
                   originalPrice: parseFloat(data.originalPrice),
                   resellPrice: parseFloat(data.resellPrice),
                   image: img,
-                  location: data.sellerLocation,
-                  postDate: currentDate,
-                  postTime: currentTime,
-                  category: data.category,
-                  condition: data.condition,
-                  yearsOfUse: data.yearsOfUse,
-                  description: data.description,
+                  sellerInfo: {
+                     id: currentUser?._id,
+                     email: user?.email,
+                     phone: data?.phone,
+                     location: data?.sellerLocation,
+                  },
+                  yearsOfUse: data?.yearsOfUse,
+                  condition: data?.condition,
+                  isAdvertised: false,
+                  status: "available",
                };
                console.log(product);
-               fetch(`https://productko-server.vercel.app/products`, {
+               fetch(`${baseURL}/product`, {
                   method: "POST",
                   headers: {
                      "content-type": "application/json",
-                     authorization: `bearer ${localStorage.getItem(
-                        "productKoToken"
-                     )}`,
+                     authorization: accessToken,
                   },
                   body: JSON.stringify(product),
                })
@@ -86,10 +95,9 @@ const AddProducts = () => {
                      return res.json();
                   })
                   .then((data) => {
-                     if (data.acknowledged) {
-                        toast.success(
-                           `${product.productName} is added successfully`
-                        );
+                     if (data.status === "success") {
+                        toast.success(data.message);
+                        console.log(data);
                         navigate("/dashboard/myProducts");
                      }
                   })
@@ -298,7 +306,7 @@ const AddProducts = () => {
                         >
                            {categories.map((category) => (
                               <option key={category._id} value={category._id}>
-                                 {category.category_name}
+                                 {category.name}
                               </option>
                            ))}
                         </select>

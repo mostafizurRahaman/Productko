@@ -4,26 +4,22 @@ import { MdVerified } from "react-icons/md";
 import { BsFlagFill } from "react-icons/bs";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Context/AuthProvider";
-
+import { format } from "date-fns";
 
 const Product = ({ product }) => {
    const {
       _id,
       condition,
-      email,
       image,
-      location,
       originalPrice,
-      phone,
-      postDate,
-      postTime,
-      productName,
+
+      createdAt,
+      name,
       resellPrice,
-      sellerName,
+      sellerInfo,
       yearsOfUse,
       description,
-      isVerified,
-      isReported,
+      status,
    } = product;
    const { logOut } = useContext(AuthContext);
 
@@ -48,7 +44,7 @@ const Product = ({ product }) => {
          })
          .then((data) => {
             if (data.acknowledged) {
-               toast.success(`${productName} is reported successfully.`);
+               toast.success(`${name} is reported successfully.`);
                window.location.reload();
             }
          })
@@ -57,21 +53,25 @@ const Product = ({ product }) => {
    return (
       <div className="border-2 border-accent relative p-3 rounded-2xl pb-16 text-white bg-accent text-sm ">
          <div className="rounded-2xl relative">
-            <img src={image} className=" w-full h-[300px] rounded-lg" alt={productName} />
+            <img
+               src={image}
+               className=" w-full h-[300px] rounded-lg"
+               alt={name}
+            />
          </div>
          <div className="flex  flex-col flex-grow gap-4">
             <div className="flex flex-col gap-2">
                <div className="capitalize space-y-1 ">
                   <div className="flex justify-between items-center mt-3">
-                     <h3 className="text-2xl">{productName}</h3>
+                     <h3 className="text-2xl">{name}</h3>
                      <div className="flex items-center justify-center gap-3  text-base">
                         <BsFlagFill
                            onClick={() => handleReport(product)}
                            className={`cursor-pointer text-xl ${
-                              isReported && "text-red-500"
+                              status === "reported" && "text-red-500"
                            }`}
                         ></BsFlagFill>
-                        <p>{isReported ? "reported" : "report"}</p>
+                        <p>{status === "reported" ? "reported" : "report"}</p>
                      </div>
                   </div>
 
@@ -80,7 +80,9 @@ const Product = ({ product }) => {
                      <p>quality: {condition}</p>
                   </div>
                   <p>
-                     posted at: {postTime} on {postDate}{" "}
+                     posted at:{" "}
+                     {format(new Date(createdAt || Date.now()), "yyyy/MM/dd")}{" "}
+                     on {format(new Date(createdAt || Date.now()), "h:m aaa")}
                   </p>
                   <button className="px-2 py-1 bg-secondary text-accent inline-block mr-2 rounded-xl font-semibold capitalize">
                      price: ${resellPrice}
@@ -92,16 +94,19 @@ const Product = ({ product }) => {
                <div className="capitalize">
                   <h1 className="text-2xl ">Seller Info</h1>
                   <h3 className="text-base font-bold flex items-center justify-start gap-1">
-                     Name: {sellerName}
-                     {isVerified && (
+                     Name: {sellerInfo.id.name}
+                     {sellerInfo.id.isVerified && (
                         <MdVerified className="text-[20px] text-green-500 "></MdVerified>
                      )}
                   </h3>
                   <p>
-                     email: <span className=" normal-case ">{email}</span>
+                     email:{" "}
+                     <span className=" normal-case ">
+                        {sellerInfo?.id?.email}
+                     </span>
                   </p>
-                  <p>Phone: {phone}</p>
-                  <p>Location: {location}</p>
+                  <p>Phone: {sellerInfo.phone}</p>
+                  <p>Location: {sellerInfo.location}</p>
                </div>
             </div>
             <div className="">

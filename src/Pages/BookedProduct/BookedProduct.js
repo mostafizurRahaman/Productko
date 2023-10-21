@@ -6,9 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
 import useTitle from "../../hooks/useTitle";
 import FormError from "../../Components/Formsrror/FormError";
+import { accessToken, baseURL } from "../../configs/configs";
 
 const BookedProduct = () => {
-   const { logOut } = useContext(AuthContext);
+   const { logOut, user } = useContext(AuthContext);
    // const product = useLoaderData();
 
    const { id } = useParams();
@@ -16,25 +17,33 @@ const BookedProduct = () => {
    const { data: product = [], isLoading } = useQuery({
       queryKey: ["product", id],
       queryFn: async () => {
-         const res = await fetch(
-            `https://productko-server.vercel.app/products/${id}`,
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
-            }
-         );
+         const res = await fetch(`${baseURL}/product/${id}`, {
+            headers: {
+               authorization: accessToken,
+            },
+         });
+
          if (res.status === 403 || res.status === 401) {
             logOut();
             return;
          }
          const data = await res.json();
-         return data;
+         // console.log(data);
+         return data.data;
       },
    });
-   console.log(product);
+   const { data: currentUser = {} } = useQuery({
+      queryKey: ["currentUser", user?.email],
+      queryFn: async () => {
+         if (user?.email) {
+            const res = await fetch(`${baseURL}/user?email=${user?.email}`);
+            const data = await res.json();
+            // console.log(data);
+            return data.data.users[0];
+         }
+         return {};
+      },
+   });
    const navigate = useNavigate();
 
    const {
@@ -42,51 +51,48 @@ const BookedProduct = () => {
       handleSubmit,
       formState: { errors },
    } = useForm();
-   const { user } = useContext(AuthContext);
 
-   const { _id, productName, email, resellPrice, category, image } = product;
-   useTitle(`${productName}- Booking `);
+   const { _id, name, sellerInfo, resellPrice, category } = product;
+   console.log(product);
+   useTitle(`${name}- Booking `);
 
-   const handleBooking = (data) => {
-      const date = new Date();
-      const time = date.toLocaleTimeString();
-      const currentDate = date.toLocaleDateString();
+   const handleBooking = async (data) => {
       const bookedProduct = {
-         product_id: _id,
-         productName,
-         email: user.email,
-         buyerName: user?.displayName,
-         location: data.location,
-         image: image,
-         phone: data.phone,
+         product: _id,
          price: resellPrice,
-         sellerEmail: email,
-         orderTime: time,
-         orderDate: currentDate,
-         category_id: category,
-      };
-      fetch(`https://productko-server.vercel.app/bookings`, {
-         method: "POST",
-         headers: {
-            "content-type": "application/json",
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
+         category: category,
+         buyerInfo: {
+            id: currentUser?._id,
+            email: user?.email,
+            location: data.location,
+            phone: data.phone,
          },
-         body: JSON.stringify(bookedProduct),
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
-            return res.json();
-         })
-         .then((data) => {
-            if (data.acknowledged) {
-               toast.success(`${productName} is Booked.`);
-               navigate("/dashboard/my-orders");
-            }
-         })
-         .catch((err) => console.log(err));
+         sellerInfo: sellerInfo,
+         status: "pending",
+      };
+
+      // console.log(bookedProduct);
+      try {
+         const res = await fetch(`${baseURL}/booking`, {
+            method: "POST",
+            headers: {
+               "content-type": "application/json",
+               authorization: accessToken,
+            },
+            body: JSON.stringify(bookedProduct),
+         });
+         if (res.status === "403" || res.status === "401") {
+            return logOut();
+         }
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            navigate("/dashboard/my-orders");
+         }
+      } catch (err) {
+         toast.error(err.message);
+         console.log(err);
+      }
    };
 
    return (
@@ -142,7 +148,7 @@ const BookedProduct = () => {
                   id="ProductName"
                   className="pl-2  placeholder:capitalize  w-full  border-b-2 border-accent focus:border-b-primary outline-none duration-1000 transition-all focus:italic text-lg focus:text-accent py-1 rounded-lg "
                   placeholder="product name"
-                  defaultValue={productName}
+                  defaultValue={name}
                   readOnly
                />
             </div>

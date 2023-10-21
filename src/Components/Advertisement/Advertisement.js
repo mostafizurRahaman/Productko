@@ -2,19 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import Loading from "../Loading/Loading";
 import Product from "../Product/Product";
-
+import { baseURL } from "../../configs/configs";
 
 const Advertisement = () => {
-   
    const { data: products = [], isLoading } = useQuery({
-      queryKey: ["advertisements"],
+      queryKey: ["products"],
       queryFn: async () => {
          const res = await fetch(
-            `https://productko-server.vercel.app/advertised`
+            `${baseURL}/product?isAdvertised=true&page=1&limit=6`
          );
-
          const data = await res.json();
-         return data;
+         console.log(data);
+         return data.data.products;
       },
    });
 
@@ -33,7 +32,7 @@ const Advertisement = () => {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-10 ">
-                  {products.slice(0,3).map((product) => (
+                  {products.map((product) => (
                      <Product key={product._id} product={product}></Product>
                   ))}
                </div>

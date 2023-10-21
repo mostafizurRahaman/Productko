@@ -13,6 +13,7 @@ import useToken from "../../hooks/useToken";
 import FormError from "../../Components/Formsrror/FormError";
 import Loading from "../../Components/Loading/Loading";
 import "./Register.css";
+import { baseURL } from "../../configs/configs";
 const Register = () => {
    useTitle("Register");
    const [createdEmail, setCreatedEmail] = useState("");
@@ -51,12 +52,13 @@ const Register = () => {
       })
          .then((res) => res.json())
          .then((imageData) => {
-            console.log(imageData, imageData.success);
+            // console.log(imageData, imageData.success);
             if (imageData.success) {
                const userPhoto = imageData.data.url;
                createUser(data.email, data.password)
                   .then((res) => {
                      const user = res.user;
+                     console.log(user.emailVerified);
                      updateUser({
                         displayName: data.name,
                         photoURL: userPhoto,
@@ -66,7 +68,9 @@ const Register = () => {
                         email: data.email,
                         photoURL: userPhoto,
                         role: data.role,
+                        isVerified: false,
                      };
+                     console.log(newUser);
                      savedUser(newUser);
                   })
                   .catch((err) => {
@@ -99,6 +103,7 @@ const Register = () => {
                email: user.email,
                photoURL: user.photoURL,
                role: "buyer",
+               isVerified: false,
             };
             savedUser(newUser);
          })
@@ -108,8 +113,8 @@ const Register = () => {
          });
    };
 
-   const savedUser = (user) => {
-      fetch("https://productko-server.vercel.app/users", {
+   const savedUser = async (user) => {
+      fetch(`${baseURL}/user/sign-up`, {
          method: "POST",
          headers: {
             "content-type": "application/json",
@@ -118,15 +123,17 @@ const Register = () => {
       })
          .then((res) => res.json())
          .then((data) => {
-            if (data.acknowledged || data.alreadyAdded) {
-               setCreatedEmail(user.email);
-               toast.success(
-                  `Congratulations ${user.name}, your account created Successfully`
-               );
+            if (data?.status === "success") {
+               setCreatedEmail(data.data.email);
+               toast.success(data.message);
                setLoading(false);
             }
          })
-         .catch((err) => console.log(err));
+         .catch((err) => {
+            console.log(err);
+            toast.error(err.message);
+            setLoading(false);
+         });
    };
    return (
       <div className="flex items-center justify-center min-h-screen  py-5 registerBg">
