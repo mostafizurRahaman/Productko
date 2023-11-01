@@ -5,11 +5,10 @@ import Product from "../../Components/Product/Product";
 import { accessToken, baseURL } from "../../configs/configs";
 
 const CategoryProducts = () => {
-   
    let { id } = useParams();
    console.log(id);
 
-   const { data: products = [] } = useQuery({
+   const { data: products = [], refetch: categoryProductRefetch } = useQuery({
       queryKey: ["products", id],
       queryFn: async () => {
          const res = await fetch(
@@ -40,7 +39,11 @@ const CategoryProducts = () => {
 
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-10 ">
             {products.map((product) => (
-               <Product key={product._id} product={product}></Product>
+               <Product
+                  key={product._id}
+                  product={product}
+                  refetch={categoryProductRefetch}
+               ></Product>
             ))}
          </div>
       </div>

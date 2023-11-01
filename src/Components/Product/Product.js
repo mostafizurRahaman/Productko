@@ -5,8 +5,9 @@ import { BsFlagFill } from "react-icons/bs";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Context/AuthProvider";
 import { format } from "date-fns";
+import { accessToken, baseURL } from "../../configs/configs";
 
-const Product = ({ product }) => {
+const Product = ({ product, refetch }) => {
    const {
       _id,
       condition,
@@ -23,32 +24,33 @@ const Product = ({ product }) => {
    } = product;
    const { logOut } = useContext(AuthContext);
 
-   const handleReport = (product) => {
-      fetch(
-         `https://productko-server.vercel.app/products/reported/${product._id}`,
-         {
-            method: "put",
+   const handleReport = async (product) => {
+      try {
+         const res = await fetch(`${baseURL}/product/${product._id}`, {
+            method: "PATCH",
             headers: {
-               authorization: `bearer ${localStorage.getItem(
-                  "productKoToken"
-               )}`,
+               "content-type": "application/json",
+               authorization: accessToken,
             },
+            body: JSON.stringify({
+               status: "reported",
+            }),
+         });
+         if (res.status === 403 || res.status === 401) {
+            logOut();
+            return;
          }
-      )
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
-            return res.json();
-         })
-         .then((data) => {
-            if (data.acknowledged) {
-               toast.success(`${name} is reported successfully.`);
-               window.location.reload();
-            }
-         })
-         .catch((err) => console.log(err));
+         const data = await res.json();
+         console.log(data);
+         if (data.status === "success") {
+            toast.success(`${product.name} reported `);
+            refetch();
+         } else {
+            toast.error("product doesn't reported successfully");
+         }
+      } catch (err) {
+         toast.error(err.message);
+      }
    };
    return (
       <div className="border-2 border-accent relative p-3 rounded-2xl pb-16 text-white bg-accent text-sm ">

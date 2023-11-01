@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthProvider";
-import { baseURL } from "../configs/configs";
+import { accessToken, baseURL } from "../configs/configs";
 
 const useIsAdmin = (email) => {
    const { logOut } = useContext(AuthContext);

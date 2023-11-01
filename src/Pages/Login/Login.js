@@ -20,7 +20,7 @@ const Login = () => {
       handleSubmit,
       formState: { errors },
    } = useForm();
-   const { LogIn, GoogleSignIn } = useContext(AuthContext);
+   const { LogIn, GoogleSignIn, setUser } = useContext(AuthContext);
    const [loginEmail, setLoginEmail] = useState("");
    const [generalError, setGeneralError] = useState("");
    const navigate = useNavigate();
@@ -43,8 +43,9 @@ const Login = () => {
          .then((res) => {
             const user = res.user;
             setLoginEmail(user.email);
-            toast.success("Login successfully");
             setLoading(false);
+            setUser(user);
+            toast.success("Login successfully");
          })
          .catch((err) => {
             setGeneralError(err.message);

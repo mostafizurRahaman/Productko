@@ -5,7 +5,11 @@ import Product from "../Product/Product";
 import { baseURL } from "../../configs/configs";
 
 const Advertisement = () => {
-   const { data: products = [], isLoading } = useQuery({
+   const {
+      data: products = [],
+      isLoading,
+      refetch,
+   } = useQuery({
       queryKey: ["products"],
       queryFn: async () => {
          const res = await fetch(
@@ -33,7 +37,11 @@ const Advertisement = () => {
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-10 ">
                   {products.map((product) => (
-                     <Product key={product._id} product={product}></Product>
+                     <Product
+                        key={product._id}
+                        product={product}
+                        refetch={refetch}
+                     ></Product>
                   ))}
                </div>
             </div>

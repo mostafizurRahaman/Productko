@@ -5,10 +5,11 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
 import Loading from "../../../../Components/Loading/Loading";
+import { accessToken, baseURL } from "../../../../configs/configs";
 
 const AllBuyers = () => {
    const { logOut } = useContext(AuthContext);
-   useTitle('All Buyers'); 
+   useTitle("All Buyers");
 
    const {
       data: buyers = [],
@@ -17,22 +18,18 @@ const AllBuyers = () => {
    } = useQuery({
       queryKey: ["buyers"],
       queryFn: async () => {
-         const res = await fetch(
-            "https://productko-server.vercel.app/users?role=buyer",
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
-            }
-         );
+         const res = await fetch(`${baseURL}/user?role=buyer`, {
+            headers: {
+               authorization: accessToken,
+            },
+         });
          if (res.status === 403 || res.status === 401) {
             logOut();
             return;
          }
          const data = await res.json();
-         return data;
+         console.log(data);
+         return data.data.users;
       },
    });
 
@@ -40,28 +37,29 @@ const AllBuyers = () => {
       return <Loading></Loading>;
    }
 
-   const handleDelete = (buyer) => {
-      fetch(`https://productko-server.vercel.app/users/${buyer._id}`, {
-         method: "delete",
-         headers: {
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
+   const handleDelete = async (buyer) => {
+      try {
+         const res = await fetch(`${baseURL}/user/${buyer._id}`, {
+            method: "DELETE",
+            headers: {
+               authorization: accessToken,
+            },
+         });
 
-            return res.json();
-         })
-         .then((data) => {
-            if (data.deletedCount > 0) {
-               toast.success(`${buyer.name} is deleted successfully.`);
-               refetch();
-            }
-         })
-         .catch((err) => console.log(err));
+         if (res.status === 401 || res.status === 403) {
+            return logOut();
+         }
+
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         } else {
+            toast.error(data.message);
+         }
+      } catch (err) {
+         toast.error(err.message);
+      }
    };
 
    console.log(buyers);
@@ -86,7 +84,7 @@ const AllBuyers = () => {
                      </tr>
                   </thead>
                   <tbody className="text-accent font-semibold  text-center">
-                     {buyers.map((buyer, idx) => (
+                     {buyers?.map((buyer, idx) => (
                         <tr className="text-center " key={buyer._id}>
                            <td>{idx + 1}</td>
                            <td>
@@ -98,7 +96,7 @@ const AllBuyers = () => {
                            </td>
                            <td>{buyer.name}</td>
                            <td> {buyer.email}</td>
-                           <td> {buyer.role}</td> 
+                           <td> {buyer.role}</td>
                            <td>
                               <RiDeleteBin2Fill
                                  onClick={() => {

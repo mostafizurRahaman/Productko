@@ -5,7 +5,7 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
-
+import { accessToken, baseURL } from "../../../../configs/configs";
 const AllSellers = () => {
    const { logOut } = useContext(AuthContext);
    useTitle("All sellers");
@@ -16,22 +16,17 @@ const AllSellers = () => {
    } = useQuery({
       queryKey: ["sellers"],
       queryFn: async () => {
-         const res = await fetch(
-            "https://productko-server.vercel.app/users?role=seller",
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
-            }
-         );
+         const res = await fetch(`${baseURL}/user?role=seller`, {
+            headers: {
+               authorization: accessToken,
+            },
+         });
          if (res.status === 403 || res.status === 401) {
             logOut();
             return;
          }
          const data = await res.json();
-         return data;
+         return data.data.users;
       },
    });
 
@@ -39,55 +34,61 @@ const AllSellers = () => {
       return <Loading></Loading>;
    }
 
-   const handleVerify = (seller) => {
+   const handleVerify = async (seller) => {
       console.log(seller);
-      fetch(`https://productko-server.vercel.app/users/${seller.email}`, {
-         method: "put",
-         headers: {
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
-
-            return res.json();
-         })
-         .then((data) => {
-            console.log(data, "from verify");
-            if (data.modifiedCount) {
-               toast.success(`${seller.name} is verified`);
-               refetch();
-            }
-         })
-         .catch((err) => console.log(err));
-   };
-
-   const handleDelete = (seller) => {
-      fetch(`https://productko-server.vercel.app/users/${seller._id}`, {
-         method: "delete",
-         headers: {
-            authorization: `bearer ${localStorage.getItem("productKoToken")}`,
-         },
-      })
-         .then((res) => {
-            if (res.status === 403 || res.status === 401) {
-               logOut();
-               return;
-            }
-
-            return res.json();
-         })
-         .then((data) => {
-            if (data.acknowledged) {
-               toast.success(`${seller.name} is successfully deleted`);
-               refetch();
-            }
+      try {
+         const res = await fetch(`${baseURL}/user/${seller?._id}`, {
+            method: "PATCH",
+            headers: {
+               "content-type": "application/json",
+               authorization: accessToken,
+            },
+            body: JSON.stringify({ isVerified: true }),
          });
+
+         if (res.status === 403 || res.status === 401) {
+            logOut();
+            return;
+         }
+
+         const data = await res.json();
+         if (data.status === "success") {
+            refetch();
+            toast.success(`${seller.name} is verified`);
+         } else {
+            toast.error(data.message);
+         }
+      } catch (err) {
+         toast.error(err.message);
+         console.log(err);
+      }
    };
-   console.log(sellers);
+
+   const handleDelete = async (seller) => {
+      try {
+         const res = await fetch(`${baseURL}/user/${seller._id}`, {
+            method: "DELETE",
+            headers: {
+               authorization: accessToken,
+            },
+         });
+
+         if (res.status === 401 || res.status === 403) {
+            return logOut();
+         }
+
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         } else {
+            toast.error(data.message);
+         }
+      } catch (err) {
+         toast.error(err.message);
+      }
+   };
+
    return (
       <div className="w-full flex flex-col gap-5 items-center px-5">
          <div className="flex items-center justify-center mb-5">
@@ -104,6 +105,7 @@ const AllSellers = () => {
                         <th>Image</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>role</th>
                         <th>Status </th>
                         <th>Delete </th>
                      </tr>
@@ -121,6 +123,7 @@ const AllSellers = () => {
                            </td>
                            <td>{seller.name}</td>
                            <td> {seller.email}</td>
+                           <td> {seller.role}</td>
                            <td>
                               {seller.isVerified ? (
                                  <span className="text-green-500 font-bold capitalize">
