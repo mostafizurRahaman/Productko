@@ -21,6 +21,7 @@ import Dashboard from "../../Pages/Dashboard/Dashboard/Dashboard";
 import ErrorPage from "../../Pages/ErrorPage/ErrorPage";
 import CategoryProducts from "../../Pages/CategoryProducts/CategoryProducts";
 import DisplayError from "../../Components/DisplayError/DisplayError";
+import MyPayment from "../../Pages/Dashboard/Buyer/MyPayment/MyPayment";
 const Routes = createBrowserRouter([
    {
       path: "/",
@@ -148,29 +149,37 @@ const Routes = createBrowserRouter([
                </AdminRoute>
             ),
          },
+         // {
+         //    path: "/dashboard/payment/:id",
+         //    element: (
+         //       <BuyerRoute>
+         //          <Payment></Payment>
+         //       </BuyerRoute>
+         //    ),
+         //    loader: async ({ params }) => {
+         //       const res = await fetch(
+         //          `https://productko-server.vercel.app/bookings/${params.id}`,
+         //          {
+         //             headers: {
+         //                authorization: `bearer ${localStorage.getItem(
+         //                   "productKoToken"
+         //                )}`,
+         //             },
+         //          }
+         //       );
+
+         //       const data = await res.json();
+         //       return data;
+         //    },
+         //    errorElement: <DisplayError></DisplayError>,
+         // },
          {
             path: "/dashboard/payment/:id",
             element: (
                <BuyerRoute>
-                  <Payment></Payment>
+                  <MyPayment></MyPayment>
                </BuyerRoute>
             ),
-            loader: async ({ params }) => {
-               const res = await fetch(
-                  `https://productko-server.vercel.app/bookings/${params.id}`,
-                  {
-                     headers: {
-                        authorization: `bearer ${localStorage.getItem(
-                           "productKoToken"
-                        )}`,
-                     },
-                  }
-               );
-
-               const data = await res.json();
-               return data;
-            },
-            errorElement: <DisplayError></DisplayError>,
          },
          {
             path: "/dashboard/reported",

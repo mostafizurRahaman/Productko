@@ -5,6 +5,8 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { AuthContext } from "../../../../Context/AuthProvider";
 import useTitle from "../../../../hooks/useTitle";
 import Loading from "../../../../Components/Loading/Loading";
+import { accessToken, baseURL } from "../../../../configs/configs";
+import { format } from "date-fns";
 
 const ReportedProducts = () => {
    const { logOut } = useContext(AuthContext);
@@ -16,23 +18,18 @@ const ReportedProducts = () => {
    } = useQuery({
       queryKey: ["products"],
       queryFn: async () => {
-         const res = await fetch(
-            `https://productko-server.vercel.app/reported`,
-            {
-               headers: {
-                  authorization: `bearer ${localStorage.getItem(
-                     "productKoToken"
-                  )}`,
-               },
-            }
-         );
+         const res = await fetch(`${baseURL}/product?status=reported`, {
+            headers: {
+               authorization: accessToken,
+            },
+         });
 
          if (res.status === 403 || res.status === 401) {
             logOut();
             return;
          }
          const data = await res.json();
-         return data;
+         return data.data.products;
       },
    });
 
@@ -41,7 +38,7 @@ const ReportedProducts = () => {
    }
 
    const handleDelete = (product) => {
-      fetch(`https://productko-server.vercel.app/products/${product._id}`, {
+      fetch(`${baseURL}/product/${product._id}`, {
          method: "delete",
          headers: {
             authorization: `bearer ${localStorage.getItem("productKoToken")}`,
@@ -55,8 +52,8 @@ const ReportedProducts = () => {
             return res.json();
          })
          .then((data) => {
-            if (data.deletedCount > 0) {
-               toast.success(`${product.productName} is deleted Successfully`);
+            if (data.status === "success") {
+               toast.success(`${product.name} is deleted Successfully`);
                refetch();
             }
          });
@@ -78,25 +75,34 @@ const ReportedProducts = () => {
                         <th>S.I.</th>
                         <th>product</th>
                         <th>email</th>
-                        <th>posted date</th>
-                        <th>posted time</th>
+                        <th>posted At</th>
+                        <th>update at</th>
                         <th>price</th>
                         <th>isBooked </th>
-                        <th>payment status</th>
                         <th>Action</th>
                      </tr>
                   </thead>
                   <tbody className="text-accent font-semibold text-center ">
-                     {products.map((product, idx) => (
+                     {products?.map((product, idx) => (
                         <tr key={product._id}>
                            <th>{idx + 1}</th>
-                           <td>{product.productName}</td>
-                           <td>{product.email}</td>
-                           <td>{product.postDate}</td>
-                           <td>{product.postTime}</td>
+                           <td>{product.name}</td>
+                           <td>{product.sellerInfo.email}</td>
+                           <td>
+                              {format(
+                                 new Date(product.createAt || Date.now()),
+                                 "mm : hh  dd MMM yyyy"
+                              )}
+                           </td>
+                           <td>
+                              {format(
+                                 new Date(product.updatedAt || Date.now()),
+                                 "mm : hh  dd MMM yyyy"
+                              )}
+                           </td>
                            <td>{product.resellPrice}</td>
                            <td>
-                              {product.isBooked ? (
+                              {product.status === "booked" ? (
                                  <span className="text-secondary px-2 py-1 rounded bg-red-500  font-bold capitalize ">
                                     Booked
                                  </span>
@@ -106,19 +112,8 @@ const ReportedProducts = () => {
                                  </span>
                               )}
                            </td>
-                           <td className="">
-                              {product.paymentStatus ? (
-                                 <span className="text-red-500 font-bold capitalize">
-                                    sold
-                                 </span>
-                              ) : (
-                                 <span className="text-green-500 font-bold capitalize">
-                                    available
-                                 </span>
-                              )}
-                           </td>
                            <td>
-                              {product.isBooked || product.paymentStatus || (
+                              {product.status === "booked" || (
                                  <button onClick={() => handleDelete(product)}>
                                     <AiFillCloseCircle className="text-center text-2xl font-bold text-red-500  "></AiFillCloseCircle>
                                  </button>

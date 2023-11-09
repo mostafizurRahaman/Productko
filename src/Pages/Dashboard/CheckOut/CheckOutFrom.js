@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
 import FormError from "../../../Components/Formsrror/FormError";
+import Loading from "../../../Components/Loading/Loading";
 
 const CheckOutFrom = ({ booking }) => {
    //create a state for handle payment card errors :
@@ -131,6 +132,10 @@ const CheckOutFrom = ({ booking }) => {
 
       setProcessing(false);
    };
+
+   if (processing) {
+      return <Loading></Loading>;
+   }
 
    return (
       <form onSubmit={handleSubmit}>
