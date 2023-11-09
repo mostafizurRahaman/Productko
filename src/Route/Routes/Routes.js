@@ -11,7 +11,6 @@ import MyOrders from "../../Pages/Dashboard/Buyer/MyOrders/MyOrders";
 import MyProduct from "../../Pages/Dashboard/Seller/MyProduct/MyProduct";
 import AllSellers from "../../Pages/Dashboard/Admin/AllSellers/AllSellers";
 import AllBuyers from "../../Pages/Dashboard/Admin/AllBuyers/AllBuyers";
-import Payment from "../../Pages/Dashboard/Payment/Payment";
 import ReportedProducts from "../../Pages/Dashboard/Admin/ReportedProducts/ReportedProducts";
 import AdminRoute from "../AdminRoute/AdminRoute";
 import BuyerRoute from "../BuyerRoute/BuyerRoute";
@@ -20,7 +19,7 @@ import Blog from "../../Pages/Blog/Blog";
 import Dashboard from "../../Pages/Dashboard/Dashboard/Dashboard";
 import ErrorPage from "../../Pages/ErrorPage/ErrorPage";
 import CategoryProducts from "../../Pages/CategoryProducts/CategoryProducts";
-import DisplayError from "../../Components/DisplayError/DisplayError";
+
 import MyPayment from "../../Pages/Dashboard/Buyer/MyPayment/MyPayment";
 const Routes = createBrowserRouter([
    {
@@ -49,38 +48,13 @@ const Routes = createBrowserRouter([
          },
          {
             path: "/category/:id",
-            // loader: async ({ params }) => {
-            //    const res = await axios.get(
-            //       `https://productko-server.vercel.app/categories/${params.id}`,
-            //       {
-            //          headers: {
-            //             authorization: `bearer ${localStorage.getItem(
-            //                "productKoToken"
-            //             )}`,
-            //          },
-            //       }
-            //    );
-            //    return res.data;
-            // },
+           
             element: <CategoryProducts></CategoryProducts>,
-            // errorElement: <DisplayError></DisplayError>
+           
          },
 
          {
             path: "/product/:id",
-            // loader: async ({ params }) => {
-            //    const res = await axios.get(
-            //       `https://productko-server.vercel.app/products/${params.id}`,
-            //       {
-            //          headers: {
-            //             authorization: `bearer ${localStorage.getItem(
-            //                "productKoToken"
-            //             )}`,
-            //          },
-            //       }
-            //    );
-            //    return res.data;
-            // },
             element: (
                <PrivateRoute>
                   <BuyerRoute>
@@ -88,7 +62,7 @@ const Routes = createBrowserRouter([
                   </BuyerRoute>
                </PrivateRoute>
             ),
-            // errorElement: <DisplayError></DisplayError>
+          
          },
       ],
    },
@@ -149,30 +123,7 @@ const Routes = createBrowserRouter([
                </AdminRoute>
             ),
          },
-         // {
-         //    path: "/dashboard/payment/:id",
-         //    element: (
-         //       <BuyerRoute>
-         //          <Payment></Payment>
-         //       </BuyerRoute>
-         //    ),
-         //    loader: async ({ params }) => {
-         //       const res = await fetch(
-         //          `https://productko-server.vercel.app/bookings/${params.id}`,
-         //          {
-         //             headers: {
-         //                authorization: `bearer ${localStorage.getItem(
-         //                   "productKoToken"
-         //                )}`,
-         //             },
-         //          }
-         //       );
-
-         //       const data = await res.json();
-         //       return data;
-         //    },
-         //    errorElement: <DisplayError></DisplayError>,
-         // },
+         
          {
             path: "/dashboard/payment/:id",
             element: (
